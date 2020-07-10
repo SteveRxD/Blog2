@@ -1,0 +1,66 @@
+---
+title: 'A dot-density map of Dallas'
+subtitle: '' # this goes below title in main post
+summary: 'Exploring the population distribution in and around Dallas using GIS tools.'
+author: ''
+date: '2018-05-19'
+slug: dallas-population
+categories: []
+tags: []
+authors: []
+lastmod: ''
+featured: false
+draft: false
+image:
+  caption: ""
+  preview_only: true
+projects: []
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>As a new arrival in Dallas, it’s taken me a while to get to grips with its layout. Its sheer size and sprawl make it difficult to identify where Dallas ends and neighboring cities begin.</p>
+<p>With this in mind, this post had two aims: to better understand the geography of Dallas, and to explore some of the GIS tools available in R, the open-source programming language. Specially, I wanted to produce a <a href="https://en.wikipedia.org/wiki/Dot_distribution_map">dot-density map</a> showing the approximate location of each person in Dallas and its surrounding areas.</p>
+<p><strong>The DFW Metroplex</strong></p>
+<p>A good starting point is the Dallas-Forth Worth (DFW) “Metroplex”. This is an area encompassing 13 counties, and is home to 7.4 million people. This is one of the <a href="https://en.wikipedia.org/wiki/Dallas%E2%80%93Fort_Worth_metroplex">fastest growing metropolitan areas</a> in the United States.</p>
+<p><strong>Fig 1: The Dallas-Fort Worth Metroplex</strong></p>
+<iframe src="/img/post02-dallas-population/map1.html" width="100%" height="500">
+</iframe>
+<p>To narrow things down, I focused on four counties which account for over 85% of residents in the Metroplex, namely Dallas County (2.6 million people), Tarrant (2.0 million), Collin (0.9 million), and Denton (0.8 million). The map below shows these key counties, overlaid by the boundaries of the City of Dallas.</p>
+<p><strong>Fig 2: City of Dallas and the four largest counties</strong></p>
+<iframe src="/img/post02-dallas-population/map2.html" width="100%" height="500">
+</iframe>
+<p>The next step is break the four counties down by block group. <a href="https://en.wikipedia.org/wiki/Census_block_group">Block groups</a> are small geographical units used in the decennial census and the ongoing American Community Survey (ACS). For this analysis, I used population data from the 2012 - 2016 ACS.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p><strong>Fig 3: Block groups</strong></p>
+<iframe src="/img/post02-dallas-population/map3.html" width="100%" height="500">
+</iframe>
+<p>When producing a dot-density map, I wanted to allocate dots (representing people) to a random location within each block group. One problem is that these boundaries overlay bodies of water such as lakes, which are obviously uninhabited.</p>
+<p>I addressed this by ‘erasing’ the area of each block group that overlaps a major body of water. To do this I used the technique explained <a href="https://walkerke.github.io/tidycensus/articles/spatial-data.html">here</a> by Kyle Walker, the author of the tidycensus package for R. The map below shows the same block group boundaries once the areas of water have been erased.</p>
+<p><strong>Fig 4: Block groups adjusted for large bodies of water</strong></p>
+<iframe src="/img/post02-dallas-population/map4.html" width="100%" height="500">
+</iframe>
+<p>We are now ready to produce a dot-density map. Here I used one dot to represent 100 residents, and assigned each dot to a random location somewhere in each block group. The results are shown below.</p>
+<p><strong>Fig 5: Dot density map of Dallas, 2016 (1 dot = 100 people)</strong></p>
+<iframe src="/img/post02-dallas-population/map5.html" width="100%" height="600">
+</iframe>
+<p>The map illustrates Dallas’ sprawling population, and the absence of a clear delineation between neighboring cities and towns (such as Dallas, Forth Worth, Denton and McKinney). There are few blank areas on the map that would indicate rural or unoccupied land separating the cities. Any uninhabited spots tend to be rivers and airports, often with abutting commercial and industrial zones. This includes the branches of the Trinity River and the DFW airport.</p>
+<p><strong>Population growth over time</strong></p>
+<p>The final step was to produce a map showing how the population has <em>changed</em> over time. Here I used dots to represent growth or reductions in the number of people.</p>
+<p>The map below shows the change in population between 2000 and 2016.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Each blue dot represents an increase of 50 people, and each red dot represents a reduction of 50 people.</p>
+<p><strong>Fig 6: Population growth between 2000 and 2016 (1 dot = 50 people)</strong></p>
+<iframe src="/img/post02-dallas-population/map6.html" width="100%" height="600">
+</iframe>
+<p>This map shows a general decline in population levels near the centers of Dallas and Fort Worth. There is, however, a dense cluster of growth near downtown Dallas. Most of the growth is concentrated in the outlying towns and cities, notably Frisco and McKinney to the north, which in 2016 were the <a href="https://www.census.gov/newsroom/press-releases/2017/cb17-81-population-estimates-subcounty.html">second- and third-fastest growing large cities in the United States.</a></p>
+<p>These observations are consistent with the phenomenon of ‘growth rings’ seen across the US, illustrated in a set of <a href="http://www.datapointed.net/2011/04/maps-us-population-change-2000-2010-census/">impressive vizualizations</a> produced by Stephen Von Worley, described as follows:</p>
+<blockquote>
+<p>Nationwide, one feature stands out: the bumper crop of fresh suburbs that ring almost every metropolitan area. Where did all of these people come from?… The new tract developments appear to be sucking the life out the older neighborhoods, which bear the scarlet tints of waning population. Ah, the classic flight to the suburbs, but with a twist!… [A]t the very center of the biggest cities – within a stone’s throw of downtown – you’ll see a tiny, resurgent dot of blue. Apparently, at some point in recent history, a home address amongst the skyscrapers became desirable again.</p>
+</blockquote>
+<p>And that’s it! Two dot-density maps showing the distribution of Dallas’ population and its change over time. This illustrates R’s GIS capabilities, and the ability to work with spatial features (such as maps and boundary files) alongside regular data sets. As always, the code used to produced this post is available on <a href="https://github.com/SteveRxD/Blog/tree/master/content/post">GitHub</a>.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The ACS is carried out on a rolling five year basis, and gathers information previously contained in the long form of the decennial census. Figures in the ACS are based on a sample, and so are subject to sampling error.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Technically, this is between 2000 and 2012 - 2016, as the latter is based on the ASC which spans a five year period. Because the boundaries of block groups have changed over time, it was necessary to use population estimates for 2000 which had been standardized to the more recent 2010 geography. This information is published by the <a href="https://www.nhgis.org/">National Historical Geographic Information System (NHGIS)</a>.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
