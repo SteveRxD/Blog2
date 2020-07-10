@@ -5,12 +5,40 @@
     <link>/post/</link>
       <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 15 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sat, 10 Aug 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
       <title>Posts</title>
       <link>/post/</link>
     </image>
+    
+    <item>
+      <title>Common statistical tests are linear models</title>
+      <link>/post/statistical-tests/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/post/statistical-tests/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;em&gt;&lt;a href=&#34;https://steverxd.github.io/Stat_tests/&#34;&gt;This book&lt;/a&gt; demonstrates the idea that most common statistical tests are special cases of simple linear models. It builds on a book written by Jonas Lindeløv, in which he presents the linear model as a ‘Swiss Army knife’ of statistical tests. The approach offers a simplified and intuitive way to teach statistical tests.&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;!--more---&gt;
+&lt;p&gt;The book &lt;a href=&#34;https://lindeloev.github.io/tests-as-linear/&#34;&gt;Common statistical tests are linear models (or: how to teach stats)&lt;/a&gt;, by Jonas Lindeløv, beautifully demonstrates how many common statistical tests (such as the t-test, ANOVA and chi-squared) are special cases of a linear model.&lt;/p&gt;
+&lt;p&gt;To solidify my understanding, I wrote my own version of the book: &lt;a href=&#34;https://steverxd.github.io/Stat_tests/&#34;&gt;Common statistical tests are linear models (a work through)&lt;/a&gt;. I used this to work through the examples provided in the original, to expand on areas where there were gaps in my knowledge, and to explain some of the ideas using terms and concepts with which I was more familiar.&lt;/p&gt;
+&lt;p&gt;The main idea of the book is that most statistical tests can be explained as an application of the simple linear model, &lt;em&gt;&lt;span class=&#34;math inline&#34;&gt;\(y = a + b⋅x\)&lt;/span&gt;&lt;/em&gt;, which is familiar to most students of introductory statistics.&lt;/p&gt;
+&lt;p&gt;For example, say you wanted to assess whether the average salaries of men and women in a company were equal, based on a sample of 50 women and 50 men. A common test that might be applied in this case is the &lt;strong&gt;indendent sample t test&lt;/strong&gt;. The null hypothesis would be that there was no difference between the average salaries of men and women.&lt;/p&gt;
+&lt;p&gt;An equivalent approach would be a linear model, of the form:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[income = \beta_0 + \beta_1 \cdot x_i\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(x_i\)&lt;/span&gt; is a ‘dummy’ variable that takes the value of &lt;span class=&#34;math inline&#34;&gt;\(0\)&lt;/span&gt; if the person sampled is a woman and &lt;span class=&#34;math inline&#34;&gt;\(1\)&lt;/span&gt; if they are a man. In this case, &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; would be the average difference in men’s salaries relative to women, as illustrated below.&lt;/p&gt;
+&lt;center&gt;
+&lt;img src=&#34;https://res.cloudinary.com/ddjmrpbw4/image/upload/v1563649801/05%20Statistical%20tests/image_income_example.png&#34; style=&#34;width:70.0%&#34; /&gt;
+&lt;/center&gt;
+&lt;p&gt;The results of our independent sample t-test, i.e. whether there are statistically significant differences between men’s and women’s salaries, are &lt;em&gt;exactly the same&lt;/em&gt; as our test for whether &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; is different from zero! Both tests give the same p-value, which, if sufficiently low (typically below 5%) would lead us to reject the null hypothesis that there was no difference in salaries.&lt;/p&gt;
+&lt;p&gt;The book shows how the linear model can be applied in a wide range of other common tests. It also demonstrates that many non-parametric tests, which are needed when certain test assumptions do not hold, can be approximated by linear models using the &lt;em&gt;rank&lt;/em&gt; of values.&lt;/p&gt;
+&lt;p&gt;This approach brings coherence to a wide range of statistical tests, which are usually taught to students as independent tools. It helps to explain the intuition underlying statistical tests (rather than relying on rote learning) by drawing on the familiar concept of linear regressions.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Comparing city spending with Tableau</title>

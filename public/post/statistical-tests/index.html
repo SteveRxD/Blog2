@@ -23,10 +23,10 @@
   
     
   
-  <meta name="description" content="">
+  <meta name="description" content="A book which demonstrates that most common statistical tests are special cases of linear models. This offers a simplified and intuitive way to understand statistical tests.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/project/">
+  <link rel="alternate" hreflang="en-us" href="/post/statistical-tests/">
 
   
 
@@ -215,14 +215,12 @@
   
 
   
-  <link rel="alternate" href="/project/index.xml" type="application/rss+xml" title="Steve Doogue">
-  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/project/">
+  <link rel="canonical" href="/post/statistical-tests/">
 
   
   
@@ -232,35 +230,86 @@
   
   
     
-    
   
   
-  <meta property="twitter:card" content="summary">
+  <meta property="twitter:card" content="summary_large_image">
   
   <meta property="og:site_name" content="Steve Doogue">
-  <meta property="og:url" content="/project/">
-  <meta property="og:title" content="Projects | Steve Doogue">
-  <meta property="og:description" content=""><meta property="og:image" content="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png">
-  <meta property="twitter:image" content="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  <meta property="og:url" content="/post/statistical-tests/">
+  <meta property="og:title" content="Common statistical tests are linear models | Steve Doogue">
+  <meta property="og:description" content="A book which demonstrates that most common statistical tests are special cases of linear models. This offers a simplified and intuitive way to understand statistical tests."><meta property="og:image" content="/post/statistical-tests/featured.png">
+  <meta property="twitter:image" content="/post/statistical-tests/featured.png"><meta property="og:locale" content="en-us">
   
-    <meta property="og:updated_time" content="2016-04-27T00:00:00&#43;00:00">
+    
+      <meta property="article:published_time" content="2019-08-10T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-08-10T00:00:00&#43;00:00">
   
-
-  
-
-
-
 
   
 
 
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/post/statistical-tests/"
+  },
+  "headline": "Common statistical tests are linear models",
+  
+  "image": [
+    "/post/statistical-tests/featured.png"
+  ],
+  
+  "datePublished": "2019-08-10T00:00:00Z",
+  "dateModified": "2019-08-10T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Steve Doogue",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "A book which demonstrates that most common statistical tests are special cases of linear models. This offers a simplified and intuitive way to understand statistical tests."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
   
 
 
 
 
 
-  <title>Projects | Steve Doogue</title>
+  <title>Common statistical tests are linear models | Steve Doogue</title>
 
 </head>
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -389,72 +438,238 @@
 </nav>
 
 
-  
-
-
-
-
-
-
-
-
-
-
-
+  <article class="article">
 
   
 
+
+
+
+
+
+
+
+
+
+
+
+  
+
   
   
+  
+<div class="article-container pt-3">
+  <h1>Common statistical tests are linear models</h1>
+
+  
+
   
     
-  
-<div class="universal-wrapper pt-3">
-  <h1>Projects</h1>
+
+
+<div class="article-metadata">
 
   
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 10, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    3 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
 </div>
 
 
 
-<div class="universal-wrapper">
-  
+  <div class="article-container">
 
-  
-  
+    <div class="article-style">
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><em><a href="https://steverxd.github.io/Stat_tests/">This book</a> demonstrates the idea that most common statistical tests are special cases of simple linear models. It builds on a book written by Jonas Lindeløv, in which he presents the linear model as a ‘Swiss Army knife’ of statistical tests. The approach offers a simplified and intuitive way to teach statistical tests.</em></p>
+<hr>
+<!--more--->
+<p>The book <a href="https://lindeloev.github.io/tests-as-linear/">Common statistical tests are linear models (or: how to teach stats)</a>, by Jonas Lindeløv, beautifully demonstrates how many common statistical tests (such as the t-test, ANOVA and chi-squared) are special cases of a linear model.</p>
+<p>To solidify my understanding, I wrote my own version of the book: <a href="https://steverxd.github.io/Stat_tests/">Common statistical tests are linear models (a work through)</a>. I used this to work through the examples provided in the original, to expand on areas where there were gaps in my knowledge, and to explain some of the ideas using terms and concepts with which I was more familiar.</p>
+<p>The main idea of the book is that most statistical tests can be explained as an application of the simple linear model, <em><span class="math inline">\(y = a + b⋅x\)</span></em>, which is familiar to most students of introductory statistics.</p>
+<p>For example, say you wanted to assess whether the average salaries of men and women in a company were equal, based on a sample of 50 women and 50 men. A common test that might be applied in this case is the <strong>indendent sample t test</strong>. The null hypothesis would be that there was no difference between the average salaries of men and women.</p>
+<p>An equivalent approach would be a linear model, of the form:</p>
+<p><span class="math display">\[income = \beta_0 + \beta_1 \cdot x_i\]</span></p>
+<p>where <span class="math inline">\(x_i\)</span> is a ‘dummy’ variable that takes the value of <span class="math inline">\(0\)</span> if the person sampled is a woman and <span class="math inline">\(1\)</span> if they are a man. In this case, <span class="math inline">\(\beta_1\)</span> would be the average difference in men’s salaries relative to women, as illustrated below.</p>
+<center>
+<img src="https://res.cloudinary.com/ddjmrpbw4/image/upload/v1563649801/05%20Statistical%20tests/image_income_example.png" style="width:70.0%" />
+</center>
+<p>The results of our independent sample t-test, i.e. whether there are statistically significant differences between men’s and women’s salaries, are <em>exactly the same</em> as our test for whether <span class="math inline">\(\beta_1\)</span> is different from zero! Both tests give the same p-value, which, if sufficiently low (typically below 5%) would lead us to reject the null hypothesis that there was no difference in salaries.</p>
+<p>The book shows how the linear model can be applied in a wide range of other common tests. It also demonstrates that many non-parametric tests, which are needed when certain test assumptions do not hold, can be approximated by linear models using the <em>rank</em> of values.</p>
+<p>This approach brings coherence to a wide range of statistical tests, which are usually taught to students as independent tools. It helps to explain the intuition underlying statistical tests (rather than relying on rote learning) by drawing on the familiar concept of linear regressions.</p>
+
+    </div>
+
     
-    
+
+
+
+
+
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
     
       
       
-    
-    <div>
-      <h2><a href="http://example.org" target="_blank" rel="noopener">External Project</a></h2>
-      <div class="article-style">
+      
         
-          An example of linking directly to an external project website using `external_link`.
-        
-      </div>
-    </div>
-  
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=/post/statistical-tests/&amp;text=Common%20statistical%20tests%20are%20linear%20models" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
     
-    
-    
-    <div>
-      <h2><a href="/project/internal-project/" >Internal Project</a></h2>
-      <div class="article-style">
+      
+      
+      
         
-          An example of using the in-built project page.
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=/post/statistical-tests/&amp;t=Common%20statistical%20tests%20are%20linear%20models" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
         
-      </div>
-    </div>
-  
-
-  
-
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Common%20statistical%20tests%20are%20linear%20models&amp;body=/post/statistical-tests/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=/post/statistical-tests/&amp;title=Common%20statistical%20tests%20are%20linear%20models" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Common%20statistical%20tests%20are%20linear%20models%20/post/statistical-tests/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=/post/statistical-tests/&amp;title=Common%20statistical%20tests%20are%20linear%20models" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
 
       
 
