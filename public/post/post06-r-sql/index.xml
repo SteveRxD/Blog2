@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Overview | Steve Doogue</title>
+    <link>/post/post06-r-sql/</link>
+      <atom:link href="/post/post06-r-sql/index.xml" rel="self" type="application/rss+xml" />
+    <description>Overview</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 10 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <title>Overview</title>
+      <link>/post/post06-r-sql/</link>
+    </image>
+    
+    <item>
+      <title>Overview</title>
+      <link>/post/post06-r-sql/</link>
+      <pubDate>Fri, 10 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>/post/post06-r-sql/</guid>
+      <description>&lt;h2 id=&#34;flexibility&#34;&gt;Flexibility&lt;/h2&gt;
+&lt;p&gt;This is a test&lt;/p&gt;
+&lt;h2 id=&#34;this-is-a-second-sectoin&#34;&gt;This is a second sectoin&lt;/h2&gt;
+&lt;p&gt;Test goes here&lt;/p&gt;
+&lt;h2 id=&#34;this-is-a-thrid-section&#34;&gt;this is a thrid section&lt;/h2&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

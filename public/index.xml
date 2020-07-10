@@ -77,6 +77,3956 @@
     </item>
     
     <item>
+      <title>R and SQL</title>
+      <link>/post/r-and-sql/</link>
+      <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>/post/r-and-sql/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;em&gt;When analyzing data, many common procedures in SQL can also be performed in R, and vice versa. Here I demonstrate the similarities between the two. For people with a basic knowledge of either R or SQL, this may make the process of learning the other language more intuitive.&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;!--more---&gt;
+&lt;div class=&#34;alert alert-info&#34;&gt;
+  &lt;div&gt;
+    In Part 1 of this series we look at the similarities between SQL and R when &lt;em&gt;selecting&lt;/em&gt;, &lt;em&gt;sorting&lt;/em&gt; and &lt;em&gt;filtering&lt;/em&gt; data. In &lt;a href=&#34;https://www.stevedoogue.com/2019/08/r-and-sql-part2/&#34;&gt;Part 2&lt;/a&gt; we move on to look at &lt;em&gt;joins&lt;/em&gt;, &lt;em&gt;grouped data&lt;/em&gt; and &lt;em&gt;subqueries&lt;/em&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;contents&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;&lt;strong&gt;Introduction&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-sample-dataset&#34;&gt;&lt;strong&gt;The sample dataset&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#setting-up&#34;&gt;&lt;strong&gt;Setting up&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part1&#34;&gt;&lt;strong&gt;1. Selecting data&lt;/strong&gt;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#part1_1&#34;&gt;&lt;strong&gt;1.1 Select all columns&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part1_2&#34;&gt;&lt;strong&gt;1.2 Select specific columns&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part1_3&#34;&gt;&lt;strong&gt;1.3 Select distinct records&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part1_4&#34;&gt;&lt;strong&gt;1.4 Select distinct records with multiple columns&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part1_5&#34;&gt;&lt;strong&gt;1.5 Create new columns&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part2&#34;&gt;&lt;strong&gt;2. Sorting and ordering data&lt;/strong&gt;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#part2_1&#34;&gt;&lt;strong&gt;2.1 Basic sorting&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part2_2&#34;&gt;&lt;strong&gt;2.2 Sort descending&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part2_3&#34;&gt;&lt;strong&gt;2.3 Limiting the number of results&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3&#34;&gt;&lt;strong&gt;3. Filtering&lt;/strong&gt;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_1&#34;&gt;&lt;strong&gt;3.1 Basic filtering&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_2&#34;&gt;&lt;strong&gt;3.2 Filtering based on inequalities&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_3&#34;&gt;&lt;strong&gt;3.3 Filtering with AND conditions&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_4&#34;&gt;&lt;strong&gt;3.4 Filtering with OR conditions&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_5&#34;&gt;&lt;strong&gt;3.5 Filtering with both OR, AND conditions&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_6&#34;&gt;&lt;strong&gt;3.6 The IN operator&lt;/strong&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_7&#34;&gt;&lt;strong&gt;3.7 The NOT IN operator&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#part3_8&#34;&gt;&lt;strong&gt;3.8 Filtering with regular expressions&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;SQL is a language that allows users query, manipulate, and transform data. Many common queries carried out with SQL, such as filtering and joining tables, can be carried out using equivalent functions in R.&lt;/p&gt;
+&lt;p&gt;In this post, I wanted to draw some comparisons between two languages. I illustrate this using a sample database, first running queries using SQL, and then demonstrating how identical results could be achieved in R.&lt;/p&gt;
+&lt;p&gt;The purpose of this post is &lt;strong&gt;not&lt;/strong&gt; to suggest that R is a substitute for SQL, but to examine how the two approaches can achieve the same results when working with data. For people who have a basic knowledge of either R or SQL, this may make the process of learning the other language more intuitive.&lt;/p&gt;
+When working with R, I will be using the &lt;a href=&#34;https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html&#34;&gt;dplyr&lt;/a&gt; package. This is a data manipulation package that includes simple verbs (e.g. ‘select’ and ‘filter’), as well as joins (e.g. ‘left_join’ and ‘inner_join’), that can replicate many common queries carried out in SQL.
+&lt;hr&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-sample-dataset&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The sample dataset&lt;/h2&gt;
+&lt;p&gt;We will be using a fictional database called &lt;strong&gt;classicmodels&lt;/strong&gt; from the &lt;a href=&#34;http://www.mysqltutorial.org/&#34;&gt;MySQL Tutorial&lt;/a&gt; website. I will also use a number of examples provided in their tutorials, which is useful for comparing and validating our results.&lt;/p&gt;
+&lt;p&gt;The sample database is for a fictional company that sells model planes, cars and so on. It comprises the follow tables:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;customers&lt;/strong&gt;: customer details including name and address&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;products&lt;/strong&gt;: a list of models, their description, vendor, quantity in stock and prices&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;productlines&lt;/strong&gt;: includes the product line (e.g. ‘motorcycles’) and a description&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;orders&lt;/strong&gt;: sales orders placed by customers, including the date and current status&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;orderdetails&lt;/strong&gt;: details of each order, including products, quantities and prices&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;payments&lt;/strong&gt;: payments made by each customer, including the date and the amount&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;employees:&lt;/strong&gt; employees’ names, titles, offices, contact details, and supervisor&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;offices:&lt;/strong&gt; address and contact details of each office&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is shown in the following &lt;a href=&#34;http://www.mysqltutorial.org/wp-content/uploads/2018/04/MySQL-Sample-Database-Diagram-PDF-A4.pdf&#34;&gt;schema&lt;/a&gt;:&lt;/p&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;img src=&#34;https://res.cloudinary.com/ddjmrpbw4/image/upload/v1563847454/06%20R%20SQL/schema.png&#34; style=&#34;width:90.0%&#34; /&gt;
+&lt;/center&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;setting-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting up&lt;/h2&gt;
+&lt;div id=&#34;running-the-queries-in-sql&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Running the queries in SQL&lt;/h4&gt;
+&lt;p&gt;There are least two ways you can perform SQL queries on this sample database:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Type queries straight into the browser using the &lt;a href=&#34;http://www.mysqltutorial.org/tryit/&#34;&gt;TryIt&lt;/a&gt; tool provided at mysqltutorial.org; or&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Load the sample database into MySQL or another database management system. Instructions on how to install MySQL can be found &lt;a href=&#34;https://www.youtube.com/watch?v=iHTI_Nk7uwo&#34;&gt;here&lt;/a&gt;. Instructions on how to load in the sample database can be found &lt;a href=&#34;https://www.youtube.com/watch?v=7QN600zGUIo&#34;&gt;here&lt;/a&gt; (just substitute the SQL file referred to the video with the one being used in this exercise). The SQL file for the ‘classicmodel’ database can be downloaded from &lt;a href=&#34;http://www.mysqltutorial.org/mysql-sample-database.aspx&#34;&gt;mysqltutorial.org&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-the-code-in-r&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Running the code in R&lt;/h4&gt;
+&lt;p&gt;We will be looking at equivalent R code using the &lt;a href=&#34;https://www.r-bloggers.com/data-manipulation-with-dplyr/&#34;&gt;dplyr&lt;/a&gt; package. This includes the use of the pipe operator, &lt;code&gt;%&amp;gt;%&lt;/code&gt;, which allows you to chain code together in a series of logical steps. We can load the dplyr package as part of the tidyverse package:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When running the code in R, we will create a data frame that corresponds to each table in the relational database. These tables can be downloaded as individual .csv files &lt;a href=&#34;https://github.com/SteveRxD/Blog/tree/master/content/post/post06-r-sql-part1/tables&#34;&gt;here&lt;/a&gt;. Load the data into R using the following code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Enter the file path to where the files are saved on your system
+filepath &amp;lt;- &amp;#39;tables/&amp;#39;     
+
+# Read in the tables
+customers    &amp;lt;- read_csv(paste0(filepath,&amp;#39;customers.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+employees    &amp;lt;- read_csv(paste0(filepath,&amp;#39;employees.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+offices      &amp;lt;- read_csv(paste0(filepath,&amp;#39;offices.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+orderdetails &amp;lt;- read_csv(paste0(filepath,&amp;#39;orderdetails.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+orders       &amp;lt;- read_csv(paste0(filepath,&amp;#39;orders.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+payments     &amp;lt;- read_csv(paste0(filepath,&amp;#39;payments.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+productlines &amp;lt;- read_csv(paste0(filepath,&amp;#39;productlines.csv&amp;#39;), na = &amp;quot;NULL&amp;quot;)
+products     &amp;lt;- read_csv(paste0(filepath,&amp;#39;products.csv&amp;#39;),  
+               # prevent the model scale (e.g. 1:10) from being read as a date:
+               col_types = cols (productScale = col_character()), na = &amp;quot;NULL&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we’re ready to start running SQL queries and the equivalent code in R!&lt;br /&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;1. Selecting data&lt;/h2&gt;
+&lt;div id=&#34;part1_1&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1.1 Select all columns&lt;/h4&gt;
+&lt;p&gt;The most simple select statement is one that returns all the information from a table.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To get data from a table in SQL we use the &lt;code&gt;SELECT&lt;/code&gt; statement, to list the columns we are interested in, and &lt;code&gt;FROM&lt;/code&gt;, to specify the table. If we want &lt;em&gt;all&lt;/em&gt; records from a table, we use &lt;code&gt;SELECT *&lt;/code&gt;. For example, to see all the records on the employees table we would use:&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT * 
+FROM employees&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To get the same results in R, we simply enter the name of table, as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;employees&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This gives us the names and details of the 23 employees in the database:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+employeeNumber
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+lastName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+firstName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+extension
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+email
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+officeCode
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+reportsTo
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+jobTitle
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1002
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Murphy
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diane
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x5800
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:dmurphy@classicmodelcars.com&#34; class=&#34;email&#34;&gt;dmurphy@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+NA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+President
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Patterson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mary
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x4611
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:mpatterso@classicmodelcars.com&#34; class=&#34;email&#34;&gt;mpatterso@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1002
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+VP Sales
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1076
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Firrelli
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jeff
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x9273
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:jfirrelli@classicmodelcars.com&#34; class=&#34;email&#34;&gt;jfirrelli@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1002
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+VP Marketing
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1088
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Patterson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+William
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x4871
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:wpatterson@classicmodelcars.com&#34; class=&#34;email&#34;&gt;wpatterson@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Manager (APAC)
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bondur
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gerard
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x5408
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:gbondur@classicmodelcars.com&#34; class=&#34;email&#34;&gt;gbondur@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sale Manager (EMEA)
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bow
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Anthony
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x5428
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:abow@classicmodelcars.com&#34; class=&#34;email&#34;&gt;abow@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Manager (NA)
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1165
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jennings
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Leslie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x3291
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:ljennings@classicmodelcars.com&#34; class=&#34;email&#34;&gt;ljennings@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1166
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Thompson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Leslie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x4065
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:lthompson@classicmodelcars.com&#34; class=&#34;email&#34;&gt;lthompson@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1188
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Firrelli
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Julie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2173
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:jfirrelli@classicmodelcars.com&#34; class=&#34;email&#34;&gt;jfirrelli@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1216
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Patterson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Steve
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x4334
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:spatterson@classicmodelcars.com&#34; class=&#34;email&#34;&gt;spatterson@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1286
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tseng
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Foon Yue
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2248
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:ftseng@classicmodelcars.com&#34; class=&#34;email&#34;&gt;ftseng@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1323
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vanauf
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+George
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x4102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:gvanauf@classicmodelcars.com&#34; class=&#34;email&#34;&gt;gvanauf@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1143
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1337
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bondur
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Loui
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x6493
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:lbondur@classicmodelcars.com&#34; class=&#34;email&#34;&gt;lbondur@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1370
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Hernandez
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gerard
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2028
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:ghernande@classicmodelcars.com&#34; class=&#34;email&#34;&gt;ghernande@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1401
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Castillo
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pamela
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2759
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:pcastillo@classicmodelcars.com&#34; class=&#34;email&#34;&gt;pcastillo@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1501
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bott
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Larry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2311
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:lbott@classicmodelcars.com&#34; class=&#34;email&#34;&gt;lbott@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1504
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jones
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Barry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:bjones@classicmodelcars.com&#34; class=&#34;email&#34;&gt;bjones@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1611
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Fixter
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Andy
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:afixter@classicmodelcars.com&#34; class=&#34;email&#34;&gt;afixter@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1088
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1612
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marsh
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Peter
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:pmarsh@classicmodelcars.com&#34; class=&#34;email&#34;&gt;pmarsh@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1088
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1619
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+King
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tom
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:tking@classicmodelcars.com&#34; class=&#34;email&#34;&gt;tking@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1088
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1621
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Nishi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mami
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:mnishi@classicmodelcars.com&#34; class=&#34;email&#34;&gt;mnishi@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1625
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Kato
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Yoshimi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:ykato@classicmodelcars.com&#34; class=&#34;email&#34;&gt;ykato@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1621
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1702
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gerard
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Martin
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+x2312
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;a href=&#34;mailto:mgerard@classicmodelcars.com&#34; class=&#34;email&#34;&gt;mgerard@classicmodelcars.com&lt;/a&gt;
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part1_2&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1.2 Select specific columns&lt;/h4&gt;
+&lt;p&gt;What if you only want a subset of columns from a given table, such as employees’ first and last names?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In SQL you just list the column of interest in the &lt;code&gt;SELECT&lt;/code&gt; clause as follows:&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  firstName, lastName 
+FROM 
+  employees&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The equivalent R code uses the &lt;code&gt;select()&lt;/code&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;employees %&amp;gt;% 
+  select(firstName, lastName)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note for those learning R, it might be helpful to read the &lt;code&gt;%&amp;gt;%&lt;/code&gt; operator as “and then”.&lt;br /&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part1_3&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1.3 Select distinct records&lt;/h4&gt;
+&lt;p&gt;Say we want a list of distinct countries in which we have customers, i.e. without returning the same country name twice.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In SQL we would use &lt;code&gt;SELECT DISTINCT&lt;/code&gt; clause, as follows:&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  DISTINCT country 
+FROM customers
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In R, we get the same result using the &lt;code&gt;distinct()&lt;/code&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+   distinct(country) &lt;/code&gt;&lt;/pre&gt;
+Both approaches yield a list of 23 unique countries where the company has customers:
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+country
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Norway
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Poland
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Germany
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Spain
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sweden
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Denmark
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Singapore
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Portugal
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Japan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Finland
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+UK
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Ireland
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Canada
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Hong Kong
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Italy
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Switzerland
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Netherlands
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Belgium
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Zealand
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+South Africa
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Austria
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Philippines
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Russia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Israel
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part1_4&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1.4 Select distinct records with multiple columns&lt;/h4&gt;
+&lt;p&gt;A similar approach can be used when you want to see distinct combinations of two or more variables / columns.&lt;/p&gt;
+&lt;p&gt;For instance, say you want a list of all US cities in which the company has customers. We can’t simply look at distinct city names, as there can be more than one city with the same name: for example, in our database we have a ‘Glendale’ in California and a ‘Glendale’ in Connecticut.&lt;/p&gt;
+&lt;p&gt;To address this we specify both city and state in our query, as follows (I’m jumping forward here and also adding a &lt;code&gt;WHERE&lt;/code&gt; clause, to restrict our results to cities in the USA):&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  DISTINCT city,state 
+FROM 
+  customers
+WHERE 
+  country = &amp;#39;USA&amp;#39; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The equivalent R code uses &lt;code&gt;filter()&lt;/code&gt; instead of SQL’s &lt;code&gt;WHERE&lt;/code&gt;, as will be discussed later:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(country == &amp;#39;USA&amp;#39;) %&amp;gt;%  # ignore this for now!
+  distinct(city, state) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Both approaches return 24 rows containing distinct combinations of cities and states.&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+city
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+state
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Las Vegas
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NV
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Rafael
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Francisco
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NYC
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Allentown
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burlingame
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Haven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bridgewater
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brickhaven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pasadena
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Diego
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+White Plains
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Bedford
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Newark
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NJ
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Philadelphia
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Los Angeles
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boston
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Nashua
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NH
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Jose
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burbank
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brisbane
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part1_5&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;1.5 Create new columns&lt;/h4&gt;
+&lt;p&gt;What if we want to create a new column, using the information contained in existing columns?&lt;/p&gt;
+&lt;p&gt;For example: The &lt;em&gt;orderdetails&lt;/em&gt; table contains information on which products were included in each order (&lt;em&gt;productCode&lt;/em&gt;), the quantity of each product (&lt;em&gt;quantityOrdered&lt;/em&gt;) and the price per unit (&lt;em&gt;priceEach&lt;/em&gt;). We could use this information to calculate the &lt;strong&gt;value&lt;/strong&gt; of each product that was ordered.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In SQL, within the &lt;code&gt;SELECT&lt;/code&gt; clause, we can calculate our new column and as assign it a name (‘alias’) using the &lt;code&gt;AS&lt;/code&gt; keyword, as follows:&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  orderNumber, 
+  productCode,
+  quantityOrdered * priceEach AS value
+FROM orderdetails&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In R we would acheive the same results using the &lt;code&gt;mutate&lt;/code&gt; function to create our new column:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;orderdetails %&amp;gt;% 
+  mutate(value = quantityOrdered * priceEach) %&amp;gt;% 
+  select(orderNumber, productCode, value)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The two sets of code return 2,996 records that show the value of each product in every order. The first 20 rows are displayed in the table below:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+orderNumber
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+productCode
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+value
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_1749
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4080.00
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2248
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2754.50
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_4409
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1660.12
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S24_3969
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1729.21
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2325
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2701.50
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2795
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4343.56
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S24_1937
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1463.85
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10101
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S24_2022
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2040.10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_1342
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3726.45
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10102
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_1367
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1768.33
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S10_1949
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5571.80
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S10_4962
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5026.14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S12_1666
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3284.28
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_1097
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3307.50
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2432
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1283.48
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2949
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2489.13
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_2957
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2164.40
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_3136
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2173.00
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_3320
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3970.26
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10103
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+S18_4600
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3530.52
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part2&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;2. Sorting and ordering data&lt;/h2&gt;
+&lt;div id=&#34;part2_1&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;2.1 Basic sorting&lt;/h4&gt;
+&lt;p&gt;Data can be sorted using the &lt;code&gt;ORDER BY&lt;/code&gt; clause in SQL and the &lt;code&gt;arrange()&lt;/code&gt; function in R. For example, say you wanted to sort customer locations in the USA alphabetically, first by state and then by city:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  DISTINCT state, city 
+FROM 
+  customers
+WHERE 
+  country = &amp;#39;USA&amp;#39;
+ORDER BY 
+  state, city&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(country == &amp;#39;USA&amp;#39;) %&amp;gt;% 
+  distinct(state, city) %&amp;gt;% 
+  arrange(state, city)&lt;/code&gt;&lt;/pre&gt;
+Both of which give the following:
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+city
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+state
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brisbane
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burbank
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burlingame
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Los Angeles
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pasadena
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Diego
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Francisco
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Jose
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Rafael
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bridgewater
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Haven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boston
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brickhaven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Bedford
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Nashua
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NH
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Newark
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NJ
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Las Vegas
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NV
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NYC
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+White Plains
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Allentown
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Philadelphia
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part2_2&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;2.2 Sort descending&lt;/h4&gt;
+&lt;p&gt;What if you wanted to list states in reverse alphabetical order, while listing cities in alphabetical order?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In SQL, you can use &lt;code&gt;ORDER BY .... DESC&lt;/code&gt;. Any columns listed before the &lt;code&gt;DESC&lt;/code&gt; clause will be listed in descending order.&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  DISTINCT state, city 
+FROM 
+  customers
+WHERE 
+  country = &amp;#39;USA&amp;#39;
+ORDER BY 
+  state DESC, city&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Equivalently, in &lt;code&gt;R&lt;/code&gt;, you can use &lt;code&gt;arrange(desc())&lt;/code&gt;, where the parentheses include the name of the column(s) you want listed in descending order:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(country == &amp;#39;USA&amp;#39;) %&amp;gt;% 
+  distinct(state, city) %&amp;gt;% 
+  arrange(desc(state), city) &lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+city
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+state
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Allentown
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Philadelphia
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+PA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NYC
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+White Plains
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NY
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Las Vegas
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NV
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Newark
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NJ
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Nashua
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NH
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boston
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brickhaven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Bedford
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+MA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bridgewater
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New Haven
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CT
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Brisbane
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burbank
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Burlingame
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Glendale
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Los Angeles
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pasadena
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Diego
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Francisco
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Jose
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Rafael
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part2_3&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;2.3 Limiting the number of results&lt;/h4&gt;
+&lt;p&gt;To limit the number of results that are shown, you can use SQL’s &lt;code&gt;LIMIT&lt;/code&gt; clause and R’s &lt;code&gt;slice()&lt;/code&gt; function. These can be combined with ordered data to return the top or bottom results from a table.&lt;/p&gt;
+&lt;p&gt;For example, if you wanted to return the five customers with the highest credit limits you could use the following:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customerName, creditLimit 
+FROM 
+  customers
+ORDER BY 
+  creditLimit DESC
+LIMIT 5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  select(customerName, creditLimit) %&amp;gt;% 
+  arrange(desc(creditLimit)) %&amp;gt;% 
+  slice(1:5)&lt;/code&gt;&lt;/pre&gt;
+Which give the following:
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;&#34;&gt;
+creditLimit
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Euro+ Shopping Channel
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+227600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+210500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vida Sport, Ltd
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+141300
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Muscle Machine Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+138500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+AV Stores, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+136800
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Another option in R would be to use the &lt;code&gt;top_n()&lt;/code&gt; function, as described &lt;a href=&#34;https://dplyr.tidyverse.org/reference/top_n.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;3. Filtering&lt;/h2&gt;
+&lt;div id=&#34;part3_1&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.1 Basic filtering&lt;/h4&gt;
+&lt;p&gt;Filtering is used to restrict our results to records / rows that satisfy one or more criteria. We already saw some basic filtering in the above, in which we used SQL’s &lt;code&gt;WHERE&lt;/code&gt; clause and R’s &lt;code&gt;filter()&lt;/code&gt; to only shows cities that were within the United States.&lt;/p&gt;
+&lt;p&gt;Another example would be to find the names of each employee whose job title is ‘Sales Rep’:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  lastName, firstName, jobTitle
+FROM 
+  employees
+WHERE 
+  jobTitle = &amp;#39;Sales Rep&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;employees %&amp;gt;% 
+  filter(jobTitle == &amp;#39;Sales Rep&amp;#39;) %&amp;gt;% 
+  select(firstName,lastName,jobTitle)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Both sets of code return the names of the 17 sales reps:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+firstName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+lastName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+jobTitle
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Leslie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jennings
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Leslie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Thompson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Julie
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Firrelli
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Steve
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Patterson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Foon Yue
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tseng
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+George
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vanauf
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Loui
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bondur
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gerard
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Hernandez
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pamela
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Castillo
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Larry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bott
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Barry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jones
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Andy
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Fixter
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Peter
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marsh
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tom
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+King
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mami
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Nishi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Yoshimi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Kato
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Martin
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gerard
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sales Rep
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;There are a couple of differences to note between SQL and R:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;R uses &lt;code&gt;==&lt;/code&gt; instead of &lt;code&gt;=&lt;/code&gt; when filtering&lt;/li&gt;
+&lt;li&gt;In R, it is often necessary to use &lt;code&gt;filter()&lt;/code&gt; before &lt;code&gt;select()&lt;/code&gt;. This would be the case if the column you are filtering on (in this case ‘jobTitle’) was not also included in the &lt;code&gt;select()&lt;/code&gt; function below. In SQL, this order is not an issue&lt;/li&gt;
+&lt;li&gt;In R, the filter condition is case sensitive, but in SQL it is not&lt;br /&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_2&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.2 Filtering based on inequalities&lt;/h4&gt;
+&lt;p&gt;We can use the ‘not equal to’ operator &lt;code&gt;!=&lt;/code&gt; to filter records that do not match a certain criteria.&lt;/p&gt;
+&lt;p&gt;For example, to see the names of the six employees who are &lt;em&gt;not&lt;/em&gt; sales reps:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  lastName, firstName, jobTitle
+FROM 
+  employees
+WHERE 
+  jobTitle != &amp;#39;Sales Rep&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;MySQL would also accept &lt;code&gt;&amp;lt;&amp;gt;&lt;/code&gt; as the operator in this case.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;employees %&amp;gt;% 
+  filter(jobTitle != &amp;#39;Sales Rep&amp;#39;) %&amp;gt;% 
+  select(lastName, firstName, jobTitle)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you are dealing with numeric data, you can also filter using the operators &lt;code&gt;&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;gt;=&lt;/code&gt;, &lt;code&gt;&amp;lt;&lt;/code&gt; and &lt;code&gt;&amp;lt;=&lt;/code&gt;, which are the same in both languages.&lt;br /&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_3&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.3 Filtering with AND conditions&lt;/h4&gt;
+&lt;p&gt;Sometime we want to select rows where multiple criteria all hold true. This can be done using &lt;code&gt;AND&lt;/code&gt; operator in SQL, and the &lt;code&gt;&amp;amp;&lt;/code&gt; operator in R.&lt;/p&gt;
+&lt;p&gt;For example, if we wanted to see the names of customers who are located in California &lt;em&gt;and&lt;/em&gt; who have a credit limit over $100,000:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customername, state, creditlimit 
+FROM 
+  customers 
+WHERE 
+  state = &amp;#39;CA&amp;#39; AND creditlimit &amp;gt; 100000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(state == &amp;#39;CA&amp;#39; &amp;amp; creditLimit &amp;gt; 100000) %&amp;gt;% 
+  select(customerName, state, creditLimit)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These sets of code return the three customers who are both located in California and have credit limits over $100,000:&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;&#34;&gt;
+state
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;&#34;&gt;
+creditLimit
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+210500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectable Mini Designs Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Corporate Gift Ideas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_4&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.4 Filtering with OR conditions&lt;/h4&gt;
+&lt;p&gt;The OR condition returns rows where &lt;em&gt;any&lt;/em&gt; of our criteria are satisfied. In SQL we use the &lt;code&gt;OR&lt;/code&gt; operator, while in R the &lt;code&gt;|&lt;/code&gt; symbol is used.&lt;/p&gt;
+&lt;p&gt;For example, say we want to see a list of all customers who are located in the US or France:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customerName, country
+FROM 
+  customers
+WHERE 
+  country = &amp;#39;USA&amp;#39; OR country =  &amp;#39;FRANCE&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter (country == &amp;#39;USA&amp;#39; | country == &amp;#39;France&amp;#39;) %&amp;gt;% 
+  select(customerName, country)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This gives us the 48 customers who are located in either USA or France:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+country
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Atelier graphique
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Gift Stores
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Rochelle Gifts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Wheels Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Land of Toys Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Saveley &amp;amp; Henriot, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Muscle Machine Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Technics Stores Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+American Souvenirs Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Daedalus Designs Imports
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Corne D’abondance, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Depot Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vitachrome Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto-Moto Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Mini Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Toys4GrownUps.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Caravy
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boards &amp;amp; Toys Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectable Mini Designs Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Alpha Cognac
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Lyon Souveniers
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto Associés &amp;amp; Cie.
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marta’s Replicas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Classics
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Creations Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Corporate Gift Ideas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tekni Collectables Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Gift Ideas, Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Men ‘R’ US Retailers, Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marseille Mini Autos
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Reims Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gifts4AllAges.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Diecast Creations Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectables For Less Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto Canal+ Petit
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Legends Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Ideas Corp. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+The Sharp Gifts Warehouse
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Super Scale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Microscale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+FunGiftIdeas.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West Coast Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Motor Mint Distributors Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Collectibles Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_5&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.5 Filtering with both OR, AND conditions&lt;/h4&gt;
+&lt;p&gt;The examples above can be extended to combine the OR and AND conditions.&lt;/p&gt;
+&lt;p&gt;For example, if you wanted a list of customers with a credit limit of over $100,000 who are located in either the USA &lt;em&gt;or&lt;/em&gt; France:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customerName, country, creditLimit
+FROM 
+  customers
+WHERE 
+  (country = &amp;#39;USA&amp;#39; OR country =  &amp;#39;FRANCE&amp;#39;) AND creditLimit &amp;gt; 100000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(
+    (country == &amp;#39;USA&amp;#39; | country == &amp;#39;France&amp;#39;) &amp;amp; creditLimit &amp;gt; 100000
+    ) %&amp;gt;% 
+  select(customerName, country, creditLimit)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The code above returns the 11 customers who are located in the USA &lt;em&gt;or&lt;/em&gt; France, &lt;em&gt;and&lt;/em&gt; who have credit limits over $100,000.&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+country
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+creditLimit
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Rochelle Gifts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+118200
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+210500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Land of Toys Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114900
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Saveley &amp;amp; Henriot, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+123900
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Muscle Machine Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+138500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+100600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectable Mini Designs Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marta’s Replicas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+123700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Classics
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+102700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Corporate Gift Ideas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Diecast Creations Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114200
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;By default both SQL and R evaluate the AND operator before the OR operator. This is why it was necessary to put the OR condition in parentheses above, to tell SQL/R to evaluate it first.&lt;/p&gt;
+&lt;p&gt;If we &lt;em&gt;hadn’t&lt;/em&gt; used parentheses, the code would have returned the list of customers who either (a) were located in the USA, or (b) were located in France and had a credit limit greater than $100,000. This would have returned the following 38 customers:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+country
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+creditLimit
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Gift Stores
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+71800
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Rochelle Gifts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+118200
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+210500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Wheels Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+64600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Land of Toys Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114900
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Saveley &amp;amp; Henriot, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+123900
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Muscle Machine Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+138500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+100600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Technics Stores Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+84600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+American Souvenirs Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+43400
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Depot Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+84300
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vitachrome Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+76400
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto-Moto Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+23000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Mini Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+68700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Toys4GrownUps.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+90700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boards &amp;amp; Toys Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectable Mini Designs Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marta’s Replicas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+123700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Classics
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+102700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Creations Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+94500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Corporate Gift Ideas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+105000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tekni Collectables Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+43000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Gift Ideas, Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+81100
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Men ‘R’ US Retailers, Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+57700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gifts4AllAges.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+41900
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Diecast Creations Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114200
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectables For Less Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+70700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Legends Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+67500
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Ideas Corp. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+49700
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+The Sharp Gifts Warehouse
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+77600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Super Scale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+95400
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Microscale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39800
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+FunGiftIdeas.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+85800
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West Coast Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+55400
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Motor Mint Distributors Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+72600
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Collectibles Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+60300
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+85100
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_6&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.6 The IN operator&lt;/h4&gt;
+&lt;p&gt;In SQL, the &lt;code&gt;IN&lt;/code&gt; clause is used select records where a value matches any value in a list or a subquery (we’ll look at subqueries later). The equivalent operator in R is &lt;code&gt;%in%&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When used on a list, the &lt;code&gt;IN&lt;/code&gt; clause acts just like one or more &lt;code&gt;OR&lt;/code&gt; conditions.
+For example, say we want a list of customers located in either France, USA or Australia:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customerName, country
+FROM 
+  customers
+WHERE 
+  country IN (&amp;#39;France&amp;#39;, &amp;#39;USA&amp;#39;, &amp;#39;Australia&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;With R, we need to &lt;em&gt;combine&lt;/em&gt; the countries into a list using &lt;code&gt;c(...)&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(country %in% c(&amp;#39;France&amp;#39;,&amp;#39;USA&amp;#39;,&amp;#39;Australia&amp;#39;)) %&amp;gt;% 
+  select(customerName, country)&lt;/code&gt;&lt;/pre&gt;
+This returns our 53 customers in France, the USA or Australia.
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+customerName
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+country
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Atelier graphique
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Gift Stores
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australian Collectors, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Rochelle Gifts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Gifts Distributors Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Wheels Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Land of Toys Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Saveley &amp;amp; Henriot, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Muscle Machine Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Technics Stores Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+American Souvenirs Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Daedalus Designs Imports
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+La Corne D’abondance, Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cambridge Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Depot Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Vitachrome Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto-Moto Classics Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Mini Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Toys4GrownUps.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Caravy
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Boards &amp;amp; Toys Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectable Mini Designs Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Alpha Cognac
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Lyon Souveniers
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto Associés &amp;amp; Cie.
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Anna’s Decorations, Ltd
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Souveniers And Things Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marta’s Replicas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Classics
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mini Creations Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Corporate Gift Ideas Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Tekni Collectables Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australian Gift Network, Co
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Gift Ideas, Inc
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Men ‘R’ US Retailers, Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marseille Mini Autos
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Reims Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gifts4AllAges.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Online Diecast Creations Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Collectables For Less Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Auto Canal+ Petit
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+France
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Classic Legends Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gift Ideas Corp. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+The Sharp Gifts Warehouse
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Super Scale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Microscale Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+FunGiftIdeas.com
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australian Collectables, Ltd
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Australia
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West Coast Collectables Co. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Motor Mint Distributors Inc. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Signal Collectibles Ltd. 
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Diecast Collectables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+USA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_7&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.7 The NOT IN operator&lt;/h4&gt;
+&lt;p&gt;If we are interested in values are &lt;em&gt;not&lt;/em&gt; in a list - for example, all customers who are not located in France, USA or Australia?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In SQL we can use the &lt;code&gt;NOT IN&lt;/code&gt; operator:&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  customerName, country
+FROM 
+  customers
+WHERE 
+  country NOT IN (&amp;#39;France&amp;#39;,&amp;#39;USA&amp;#39;, &amp;#39;Australia&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In R, we negate the &lt;code&gt;%in%&lt;/code&gt; operator by placing a &lt;code&gt;!&lt;/code&gt; at the start of the filter function, as follows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;customers %&amp;gt;% 
+  filter(!country %in% c(&amp;#39;France&amp;#39;,&amp;#39;USA&amp;#39;,&amp;#39;Australia&amp;#39;)) %&amp;gt;% 
+  select(customerName, country)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each approach gives us 69 customers who are located in countries other than France, USA or Australia.&lt;br /&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;/div&gt;
+&lt;div id=&#34;part3_8&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;3.8 Filtering with regular expressions&lt;/h4&gt;
+&lt;p&gt;You can filter your results based on whether a column contains characters that follow a specified pattern. For example, you may want to find names that start with the letter ‘T’, or phone numbers that include the area code ‘214’.&lt;/p&gt;
+&lt;p&gt;SQL offers a user-friendly way to do this using the &lt;code&gt;LIKE&lt;/code&gt; operator, which is explained &lt;a href=&#34;http://www.mysqltutorial.org/mysql-like/&#34;&gt;here&lt;/a&gt;. However, we are instead going to look at regular expressions, which are more flexible than SQL’s &lt;code&gt;LIKE&lt;/code&gt; operator (though less user-friendly) and are consistent between SQL and R.&lt;/p&gt;
+&lt;p&gt;To use regular expressions in SQL we use the &lt;code&gt;REGEXP&lt;/code&gt; operator, and in R we use the &lt;code&gt;str_detect()&lt;/code&gt; (‘string detect’) function.&lt;/p&gt;
+&lt;p&gt;To see how this works, say we want to find all products with the word ‘Ford’ in them. We could use the following code:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;With SQL:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;markdown&#34;&gt;&lt;code&gt;SELECT 
+  productName
+FROM 
+  products
+WHERE 
+  productName REGEXP &amp;#39;Ford&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;With R:&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;products %&amp;gt;% 
+  filter(str_detect(productName,&amp;#39;Ford&amp;#39;)) %&amp;gt;% 
+  select(productName)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These sets of code return a list of 15 models with that include the word ‘Ford’:&lt;/p&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:50%; &#34;&gt;
+&lt;div style=&#34;border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; &#34;&gt;
+&lt;table class=&#34;table&#34; style=&#34;font-size: 11px; width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;font-size: 9px;position: sticky; top:0; background-color: #FFFFFF;&#34;&gt;
+productName
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1968 Ford Mustang
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1969 Ford Falcon
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1940 Ford Pickup Truck
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1911 Ford Town Car
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1932 Model A Ford J-Coupe
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1926 Ford Fire Engine
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1913 Ford Model T Speedster
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1934 Ford V8 Coupe
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1903 Ford Model A
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1976 Ford Gran Torino
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1940s Ford truck
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1957 Ford Thunderbird
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1912 Ford Model T Delivery Wagon
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1940 Ford Delivery Sedan
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1928 Ford Phaeton Deluxe
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The main difference in the code above is that SQL is not case sensitive but R is. You can specify case sensitivity as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To make SQL case sensitive, replace &lt;code&gt;REGEXP&lt;/code&gt; with &lt;code&gt;REGEXP BINARY&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;To make R ignore cases, replace &lt;code&gt;str_detect(productName,&#39;Ford&#39;)&lt;/code&gt; in the example above with &lt;code&gt;str_detect(productName, regex(&#39;ford&#39;, ignore_case=TRUE))&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The beauty of SQL’s &lt;code&gt;REGEXP&lt;/code&gt; and R’s &lt;code&gt;str_detect()&lt;/code&gt; is that they will both work with many of the same regular expressions. You can modify both sets of code above to see the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use the &lt;code&gt;^&lt;/code&gt; symbol to match the beginning of a string. For example, use &lt;code&gt;&#39;^America&#39;&lt;/code&gt; to show products beginning with the words ‘America’ or ‘American’.&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;$&lt;/code&gt; to denote the end of a string. For example, use &lt;code&gt;&#39;ter$&#39;&lt;/code&gt; to return the names of all products that end in these three letters, such as ‘helicopter’ and ‘roadster’.&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;&#39;[...]&#39;&lt;/code&gt; to match any of the strings listed within the brackets, which are separated with &lt;code&gt;|&lt;/code&gt;. For example, use &lt;code&gt;&#39;^[A|B|C]&#39;&lt;/code&gt; to match words beginning with either A, B, or C.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We won’t go into the details of regular expressions here, but a further explanation can be found at &lt;a href=&#34;http://www.mysqltutorial.org/mysql-regular-expression-regexp.aspx&#34;&gt;mysqltutorial.org&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;#contents&#34;&gt;&lt;em&gt;(Top)&lt;/em&gt;&lt;/a&gt;
+&lt;hr&gt;
+&lt;p&gt;Part 2 of this post, to follow, will look at joins, using grouped data, and subqueries.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Common statistical tests are linear models</title>
       <link>/post/statistical-tests/</link>
       <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>

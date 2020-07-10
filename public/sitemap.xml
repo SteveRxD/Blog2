@@ -33,12 +33,17 @@
   </url>
   
   <url>
-    <loc>/post/statistical-tests/</loc>
-    <lastmod>2019-08-10T00:00:00+00:00</lastmod>
+    <loc>/post/</loc>
+    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/</loc>
+    <loc>/post/r-and-sql/</loc>
+    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/statistical-tests/</loc>
     <lastmod>2019-08-10T00:00:00+00:00</lastmod>
   </url>
   
