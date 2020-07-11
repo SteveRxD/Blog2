@@ -5698,7 +5698,7 @@ buyPrice
 <p>Unlike a derived table, a CTE can be referenced multiple times in the same query. In addition, a CTE provides better readability and performance in comparison with a derived table.</p>
 <p>As a simple illustration, we can repeat the example above (see section 3.2) where we found the maximum, minimum and average number of items in an order. This time, instead of using a subquery, the inner query can be expressed as a common table expression called ‘itemcount’</p>
 <p><em>With SQL:</em></p>
-<p>This time we create the temporary table called ‘itemcount’ using the <code>WITH</code> clause. We then select the relevant informatoin from this CTE:</p>
+<p>This time we create the temporary table called ‘itemcount’ using the <code>WITH</code> clause. We then select the relevant information from this CTE:</p>
 <pre class="markdown"><code>WITH itemcount AS (
     SELECT orderNumber, count(orderNumber) as items
   FROM orderdetails
