@@ -118,13 +118,13 @@
 &lt;/div&gt;
 &lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;In &lt;a href=&#34;https://www.stevedoogue.com/2019/08/r-and-sql/&#34;&gt;Part 1&lt;/a&gt; of this series we looked at the similarities between SQL and R when &lt;em&gt;selecting&lt;/em&gt;, &lt;em&gt;sorting&lt;/em&gt; and &lt;em&gt;filtering&lt;/em&gt; data. In this second part we are going to extend the comparison to include &lt;em&gt;joins&lt;/em&gt;, &lt;em&gt;grouped data&lt;/em&gt; and &lt;em&gt;subqueries&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;In &lt;a href=&#34;https://stevedoogue.netlify.app/post/r-and-sql-a/&#34;&gt;Part 1&lt;/a&gt; of this series we looked at the similarities between SQL and R when &lt;em&gt;selecting&lt;/em&gt;, &lt;em&gt;sorting&lt;/em&gt; and &lt;em&gt;filtering&lt;/em&gt; data. In this second part we are going to extend the comparison to include &lt;em&gt;joins&lt;/em&gt;, &lt;em&gt;grouped data&lt;/em&gt; and &lt;em&gt;subqueries&lt;/em&gt;.&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;setup&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;The data&lt;/h2&gt;
-&lt;p&gt;We will use the same sample dataset from &lt;a href=&#34;http://www.mysqltutorial.org/&#34;&gt;mysqltutorial.org&lt;/a&gt; that was used in the first part of this post, as described &lt;a href=&#34;https://stevedoogue.netlify.app/post/r-and-sql-a/#the-sample-dataset&#34;&gt;here&lt;/a&gt;. The schema is reproduced below for ease of reference:
+&lt;p&gt;We will use the same sample dataset from &lt;a href=&#34;http://www.mysqltutorial.org/&#34;&gt;mysqltutorial.org&lt;/a&gt; that was used in the first part of this post, as described &lt;a href=&#34;https://stevedoogue.netlify.app/post/r-and-sql-a/&#34;&gt;here&lt;/a&gt;. The schema is reproduced below for ease of reference:
 &lt;br&gt;&lt;br /&gt;
 &lt;br&gt;&lt;/p&gt;
 &lt;center&gt;
