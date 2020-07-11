@@ -102,7 +102,7 @@ products     <- read_csv(paste0(filepath,'products.csv'),
 
 ## Introduction{#introduction}
 
-In [Part 1](https://www.stevedoogue.com/2019/08/r-and-sql/) of this series we looked at the similarities between SQL and R when _selecting_, _sorting_ and _filtering_ data. In this second part we are going to extend the comparison to include _joins_, _grouped data_ and _subqueries_. 
+In [Part 1](https://stevedoogue.netlify.app/post/r-and-sql-a/) of this series we looked at the similarities between SQL and R when _selecting_, _sorting_ and _filtering_ data. In this second part we are going to extend the comparison to include _joins_, _grouped data_ and _subqueries_. 
 
 <hr>
 <br>
