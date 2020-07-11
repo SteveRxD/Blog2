@@ -1,0 +1,847 @@
+---
+title: 'R and SQL (Part 2)'
+subtitle: '' # this goes below title in main post
+summary: 'Part 2 of a series that looks at parallels between SQL and R. Here we look at joins, grouped data and subqueries.'
+author: ''
+date: '2019-11-13'
+slug: r-and-sql-b
+categories: []
+tags: []
+authors: []
+lastmod: ''
+featured: false
+draft: false
+image:
+  caption: ""
+  preview_only: true
+projects: []
+---
+
+_This is part 2 of a series of posts demonstrating how equivalent analysis can be carried out in SQL and R. Here we look at joins, grouped data, and subqueries._ 
+
+<hr>
+<!--more--->
+
+
+```{r, echo= FALSE, warning = FALSE, message = FALSE}
+library(tidyverse)
+```
+
+```{r, echo = FALSE, warning=FALSE, message = FALSE}
+
+# Create a function to show R output as a formatted table (kable)
+
+# Creates the showTable(x,y, scroll) function, where
+# x = the dataframe to be displayed;
+# y = the number of rows to show (defaults to all rows)
+# scroll = will include a scroll bar unless you specify 'no'
+
+# Tables use knitr and kableExtra
+# Seehttps://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#overview
+library(knitr)
+library(kableExtra)
+
+#Create the function
+showTable <- function(x, y, scroll = "yes") { 
+
+  a <-  if (missing(y)){
+    x
+  } else {
+    x %>%  head(y)
+  }
+  
+  b <- kable(a) %>%
+    kable_styling(font_size = 11) %>% 
+    row_spec(0, font_size = 9) 
+  
+  if(scroll == "yes"){
+    b %>% scroll_box(height = "200px")
+  }  else {
+    b
+  }
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Enter the file path to where the files are saved on your system
+filepath <- 'tables/'     
+
+# Read in the tables
+customers    <- read_csv(paste0(filepath,'customers.csv'), na = "NULL")
+employees    <- read_csv(paste0(filepath,'employees.csv'), na = "NULL")
+offices      <- read_csv(paste0(filepath,'offices.csv'), na = "NULL")
+orderdetails <- read_csv(paste0(filepath,'orderdetails.csv'), na = "NULL")
+orders       <- read_csv(paste0(filepath,'orders.csv'), na = "NULL")
+payments     <- read_csv(paste0(filepath,'payments.csv'), na = "NULL")
+productlines <- read_csv(paste0(filepath,'productlines.csv'), na = "NULL")
+products     <- read_csv(paste0(filepath,'products.csv'),  
+               # prevent the model scale (e.g. 1:10) from being read as a date:
+               col_types = cols (productScale = col_character()), na = "NULL")
+
+```
+
+
+## Contents
+ -  [**Introduction**](#introduction)
+ -  [**The data**](#setup)
+ -  [**1. Common joins**](#part1)
+    -  [**1.1  Inner join**](#part1_1)
+    -  [**1.2  Left join**](#part1_2)
+    -  [**1.3  Right join**](#part1_3)
+    -  [**1.4  Full join**](#part1_4)
+ -  [**2. Grouped data**](#part2)
+    -  [**2.1 Summarizing grouped data**](#part2_1)
+    -  [**2.2 Filtering grouped data**](#part2_2)
+ -  [**3. Subqueries**](#part3)
+    -  [**3.1 Subquery in the WHERE clause**](#part3_1)
+    -  [**3.2 Subquery in the FROM clause**](#part3_2)
+    -  [**3.3 Correlated subqueries**](#part3_3)
+    -  [**3.4 Common table expressions**](#part3_4)
+<hr>  
+
+## Introduction{#introduction}
+
+In [Part 1](https://www.stevedoogue.com/2019/08/r-and-sql/) of this series we looked at the similarities between SQL and R when _selecting_, _sorting_ and _filtering_ data. In this second part we are going to extend the comparison to include _joins_, _grouped data_ and _subqueries_. 
+
+<hr>
+<br>
+
+## The data{#setup}
+
+We will use the same sample dataset from [mysqltutorial.org](http://www.mysqltutorial.org/) that was used in the first part of this post, as described [here](https://www.stevedoogue.com/2019/08/r-and-sql/#the-sample-dataset). The schema is reproduced below for ease of reference:
+<br>  
+<br>  
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1563847454/06%20R%20SQL/schema.png){width=90%}
+</center>
+
+Instructions on how to load the sample dataset into MySQL and R were provided [here](https://www.stevedoogue.com/2019/08/r-and-sql/#setting-up).  
+<br>  
+  
+[_(Top)_](#contents)
+<hr>
+
+## 1. Common joins{#part1}
+
+A join allows you to combine variables or columns from two tables. It first matches observations by their keys, then copies across variables from one table to another.
+
+To understand joins, we are going to use the explanation provided by Hadley Wickham in [R for Data Science](https://r4ds.had.co.nz/relational-data.html#understanding-joins), and the excellent [animations](https://github.com/gadenbuie/tidyexplain) that were produced by Garrick Aden-Buie. These illustrate the different ways that we can join the data in table _x_, below, with the data in table _y_. The colored columns represent the “key” variable that is used to match the rows between the tables.
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566488664/07%20R%20SQL%20p2/join_original.png){width=65%}
+</center>
+
+This section looks at four common joins: 
+
+- Inner join
+- Left join
+- Right join
+- Full join
+
+[_(Top)_](#contents)
+<hr>
+
+#### 1.1 Inner join{#part1_1}
+
+An inner join shows all rows from _x_ where there are matching values in _y_, and all columns from _x_ and _y_:
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566493838/07%20R%20SQL%20p2/join_inner_cropped.gif){width=60%}
+</center>
+
+##### Example 1.1a:
+
+Say we want to list the name of every employee from the _employees_ table who has one or more customers recorded in the _customers_ table.
+
+This is an example of an inner join, as we only want records that have a match in both tables. In this case our keys - the columns that we will be matching - are the _employeeNumber_ in the _employees_ table and the _salesRepEmployeeNumber_ in the _customers_ table. 
+
+We would like the code to return the following information:
+
+- employee number
+- employee first name
+- employee second name
+- customer name(s)
+
+_With SQL:_
+
+To do this in SQL we would use `INNER JOIN`, followed by the name of the table we are joining to. We then use `ON` to specify the names of the columns (keys) that are being used to match the data in the two tables: 
+
+```markdown
+SELECT 
+  employees.employeeNumber, 
+  employees.lastName, 
+  employees.firstName, 
+  customers.customerName
+FROM   
+  employees 
+  INNER JOIN 
+  customers 
+    ON employees.employeeNumber = customers.salesRepEmployeeNumber
+ORDER BY 
+  lastName, customerName
+```
+Note that we've specified the table from which each column is taken; for example, using `employees.employeeNumber` rather than just `employeeNumber`. This is necessary in cases where the same column name appears in more than one table. In this particular example, we could have written the code without the table prefixes, but they have been included for illustrative purposes. 
+
+
+_With R:_
+
+The same join could be carried out in R using the `inner_join` function. This includes the `by` argument (equivalent to SQL's `ON`), in which we list the names of the keys:
+
+```{r, eval = FALSE}
+employees %>%   #left-hand table
+  #after 'by' we list the key from the left-hand table first:
+  inner_join(customers, by = c("employeeNumber" = "salesRepEmployeeNumber")) %>%
+  select(employeeNumber, lastName, firstName, customerName) %>% 
+  arrange(lastName, customerName)
+```
+
+Both the SQL and R code above returns the following 100 records. Note that each employee's name appears more than once if they have more than one customer.
+```{r, echo = FALSE}
+employees %>%   #left hand table
+  inner_join(customers, by = c("employeeNumber" = "salesRepEmployeeNumber")) %>%
+  select(employeeNumber, lastName, firstName, customerName) %>% 
+  arrange(lastName, customerName) %>% 
+  showTable()
+```
+
+##### Example 1.1b:
+
+Say that we wanted to list every customer from the _customers_ table who has one or more orders in the _orders_ table. 
+
+This is another example of an inner join, this time matching records using the 'customerNumber' column as our key, which is the same in both tables. 
+
+We want the query to return the following information:
+
+- customer number
+- customer name 
+- order number
+- current order status
+
+_With SQL:_
+
+The fact that the same column name is used in both tables means we can simplify our code with `USING` instead of `ON`, as follows:
+
+```markdown
+SELECT 
+  c.customerNumber, 
+  c.customerName, 
+  o.orderNumber, 
+  o.status
+FROM
+  customers AS c 
+  INNER JOIN 
+  orders AS o
+    USING (customerNumber)
+ORDER BY
+  customerName
+```
+This simplifies the code as we only need to list one column after `USING`. 
+
+In the example above, we've also used [aliases](http://www.mysqltutorial.org/mysql-alias/) in place of the full table names, which further simplifies the code. This has assigned the short name 'c' to the 'customers' table and 'o' to the 'orders' table. This is done with the keyword `AS`, though even this could be excluded. Aliases makes the code shorter and easier to read. 
+
+_With R:_
+
+The equivalent R code is shown below. Note that we now only need to specify the one column name in the `by` argument.
+
+```{r, eval = FALSE}
+customers %>% 
+  inner_join(orders, by = "customerNumber") %>%
+  select(customerNumber, customerName, orderNumber, status) %>% 
+  arrange(customerName)
+```
+<br> 
+
+This code returns 326 rows, the first 50 of which are shown below:
+```{r, echo = FALSE}
+customers %>% 
+  inner_join(orders, by = c("customerNumber" = "customerNumber")) %>% 
+  select(customerNumber, customerName, orderNumber, status) %>% 
+  arrange(customerName) %>% 
+  showTable(y = 50)
+```
+
+[_(Top)_](#contents)
+<hr>
+
+#### 1.2 Left join{#part1_2}
+
+A left join (or outer left join) returns all rows from _x_, and all columns from _x_ and _y_. Rows in _x_ with no match in _y_ will have NA or NULL values in the new columns.  
+<br> 
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566494521/07%20R%20SQL%20p2/join_left_cropped.gif){width=60%}
+</center>
+
+
+
+##### Example 1.2:
+
+In the example above we wanted to see the names customers in the _customers_ table who had a corresponding order in the _orders_ table. But what if we wanted to see names of __all__ customers and their order information, even if they don't have any orders?
+
+This is an example of a left join. We can do this using `LEFT JOIN` in SQL and `left_join` in R, as follows:
+
+_With SQL:_ 
+
+```markdown
+SELECT 
+  c.customerNumber, 
+  c.customerName, 
+  o.orderNumber, 
+  o.status
+FROM  
+  customers AS c
+  LEFT JOIN 
+  orders AS o
+    ON c.customerNumber = o.customerNumber
+ORDER BY customerName
+```
+
+_With R:_ 
+
+```{r, eval = FALSE}
+customers %>% 
+  left_join(orders, by = "customerNumber") %>% 
+  select(customerNumber, customerName, orderNumber, status) %>% 
+  arrange(customerName)
+```
+
+This returns 350 records, the first 50 of which are shown in the table below. If you scroll down, you will see that some customers have 'NA' for *orderNumber* and *status* (this will appear as 'NULL' in MySQL). These are customers who had no corresponding orders in the *orders* table. Note that each customer will appear more than once if they have more than one order.  
+
+<br>
+```{r, echo = FALSE}
+customers %>% 
+  left_join(orders, by = "customerNumber") %>% 
+  select(customerNumber, customerName, orderNumber, status) %>% 
+  arrange(customerName) %>% 
+  showTable(50)
+```
+
+[_(Top)_](#contents)
+<hr>
+
+#### 1.3 Right join{#part1_3}
+
+A right join (or outer right join) returns all rows from _y_, and all columns from _x_ and _y_. Rows in _y_ with no match in _x_ will have NA or NULL values in the new columns.
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566503766/07%20R%20SQL%20p2/join_right_cropped.gif){width=60%}
+</center>
+
+This is exactly the same as a left join, described in the section above, but this time we're returning all rows from the _right-hand_ table (in this case, _y_) rather than those from the left-hand table. 
+
+A right join in which _y_ is designated as the right-hand table (as in the animation above) would give _exactly the same result_ as a left join in which _y_ was designated as the left-hand table. The choice of whether a table is designated on the left or the right is entirely arbitrary.
+
+Right joins can be carried out using `RIGHT JOIN` in SQL and `right_join` in R. No example is provided here given the similarity to left joins. 
+
+[_(Top)_](#contents)
+<hr>
+
+#### 1.4 Full join{#part1_4}
+
+A full join (or full outer join) returns all rows and all columns from both _x_ and _y_. Where there is no match for a particular key value, the missing values will appear as NA or NULL. 
+
+<br> 
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566496834/07%20R%20SQL%20p2/join_full_cropped.gif){width=60%}
+</center>
+
+Full joins are not actually supported in MySQL. However, a full join is equivalent to a _combination_ of a left join and right join, as described above. To combine the results of these two joins, we need to use __union__. 
+
+__Union__ returns all unique rows from tables _x_ and _y_ as follows:
+
+<center>
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1566501323/07%20R%20SQL%20p2/union.gif){width=60%}
+</center>
+
+
+##### Example 1.4:
+
+Say we want to list the name of every employee from the *employees* table, and every customer from the *customers* table. Where possible, we want to match the name of each employee to his/her customers. However we also want to return the names of all employees without customers, and the names of all customers without an associated employee. This is an example of a full join. 
+
+Assume that we want our query to return: 
+
+- each employee's last name
+- each employee's first name 
+- each customer's name
+
+_With SQL:_
+
+To simulate a full join in SQL, we are going to use a `LEFT JOIN`, a `RIGHT JOIN` and the `UNION` of the two, as follows:
+
+```markdown
+SELECT 
+  e.lastName, e.firstName, c.customerName 
+FROM 
+  employees AS e
+  LEFT JOIN 
+  customers AS c 
+    ON e.employeeNumber = c.salesRepEmployeeNumber
+
+UNION
+
+SELECT 
+  e.lastName, e.firstName, c.customerName 
+FROM 
+  employees AS e
+  RIGHT JOIN 
+  customers AS c 
+    ON e.employeeNumber = c.salesRepEmployeeNumber
+```
+
+_With R:_
+
+In R, the syntax is much simpler as we can use `full_join`:
+
+```{r, eval = FALSE}
+employees %>% 
+  full_join(customers, by = c('employeeNumber' = 'salesRepEmployeeNumber')) %>% 
+  select(lastName, firstName, customerName)
+```
+ 
+The two sets of code above return the following 130 records. As expected, this shows the name of each employee matched to their customer(s), where such a match exists, but also the names of each employee and customer even if there is no match:  
+
+<br>
+```{r, echo = FALSE}
+employees %>% 
+  full_join(customers, by = c('employeeNumber' = 'salesRepEmployeeNumber')) %>% 
+  select(lastName, firstName, customerName) %>% 
+  showTable()
+```
+
+[_(Top)_](#contents)
+<hr>
+
+## 2. Grouped data {#part2}
+
+In SQL and R, it is possible to __group__ a set of rows into a summary row. This summary row can include an aggregate measure of each group; for example, the sum, the average, or the count of records in each group. 
+
+It is also possible to *filter* the data based on these aggregates. For example, you could filter to only show rows from groups with more than 20 records, or only show rows from groups where the average value of a certain variable was greater than 100.  
+
+<hr>
+
+#### 2.1 Summarizing grouped data{#part2_1}
+
+Grouped data is often summarized using aggregate functions such as `SUM`, `AVG`, `MAX`, `MIN` and `COUNT`. Here we look at a couple of examples using our sample database.   
+
+##### Example A
+
+Say we want to find the total value (in $) of each order in our sample data set. 
+
+To do this, we need to (1) calculate the value of each product in every order, i.e. the quantity times the price; and (2) group each product sold by its order number and add these values together.
+
+_With SQL:_
+
+In SQL we group the data using the `GROUP BY` clause, and specify our aggregate calculation in the `SELECT` clause, as follows:
+
+```markdown
+SELECT 
+  orderNumber,
+  SUM(quantityOrdered * priceEach) AS value
+FROM 
+  orderdetails
+GROUP BY 
+  orderNumber
+```
+_With R:_
+
+In R, we would use `group_by()` to group the data, and `summarize()` to apply the aggregate function to each group: 
+
+```{r, eval = FALSE}
+orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarize(value = sum(quantityOrdered * priceEach)) %>% 
+  select(orderNumber, value)
+```
+
+The first 10 records (out of 326) are shown in the table below:
+```{r, echo = FALSE}
+orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarize(value = sum(quantityOrdered * priceEach)) %>% 
+  select(orderNumber, value) %>% 
+  showTable(y = 10, scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+##### Example B
+
+We can also group using an *expression* rather than values that already exist in a column. 
+
+For example, say we wanted to find the total value of orders in each year, where the order has been shipped.
+
+To do this, we need to do a combination of the following: 
+
+- Join the *orders* table, which has the date of each order, with the *orderdetails* table, which contains information on the quantity and price of the products ordered
+- Use the `YEAR()` function in SQL, and `year()` in R (using the [lubridate](https://lubridate.tidyverse.org/) package), which the returns the year corresponding to each order date. This is will be used to group the data
+- Filter the data to only include orders whose status is 'shipped'. 
+
+This can be done in the following code:
+
+_With SQL:_
+
+```markdown
+SELECT 
+  YEAR(orderDate) AS year,
+  SUM(quantityOrdered * priceEach) AS value
+FROM
+  orders
+  INNER JOIN
+  orderdetails 
+    USING (orderNumber)
+WHERE
+  status = 'Shipped'
+GROUP BY 
+  YEAR(orderDate)
+```
+_With R:_ 
+
+```{r, eval = FALSE}
+orders %>% 
+  inner_join(orderdetails, by = 'orderNumber') %>%
+  filter(status == 'Shipped') %>% 
+  group_by(year = lubridate::year(orderDate)) %>%
+  summarize(value = sum(quantityOrdered * priceEach))
+```
+
+Which gives the total value of shipped orders for the three years:
+
+```{r, echo = FALSE}
+orders %>% 
+  inner_join(orderdetails, by = 'orderNumber') %>%
+  filter(status == 'Shipped') %>% 
+  group_by(year = lubridate::year(orderDate)) %>% 
+  summarize(value = sum(quantityOrdered * priceEach)) %>% 
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+[_(Top)_](#contents)
+<hr>
+
+#### 2.2 Filtering grouped data{#part2_2}
+
+In SQL and R we can specify filter conditions for a group of rows. This assumes that we have already grouped our data using `GROUP BY` in SQL or `group_by()` in R. 
+
+When filtering grouped data in SQL we use the `HAVING` clause. Note that we do not use the `WHERE` clause, which is only used to filter ungrouped data. 
+
+In R, we filter our grouped data using `filter()`, which was also used with ungrouped data. 
+
+##### Example A
+
+Say we want to show all order numbers in which more than 650 individual items were ordered. This requires us to group by order number (*orderNumber*) from the *orderdetails* table, and to filter the results based on the total quantity of products in each order.  
+
+_With SQL:_
+
+In SQL we apply our filter using the `HAVING` clause, as follows:
+
+```markdown
+SELECT 
+  orderNumber, 
+  sum(quantityOrdered) as quantity
+FROM
+  orderdetails
+GROUP BY 
+  orderNumber
+HAVING 
+  sum(quantityOrdered) > 650
+ORDER BY 
+  quantity DESC
+```
+_With R:_ 
+
+With R, we use the `filter()` function:  
+  
+```{r, eval = FALSE}
+orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarize(quantity = sum(quantityOrdered)) %>% 
+  filter(quantity > 650) %>% 
+  arrange(desc(quantity)) 
+```
+
+This gives the following three orders with more than 650 items:
+
+```{r, echo = FALSE}
+ orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarize(quantity = sum(quantityOrdered)) %>% 
+  filter(quantity > 650) %>% 
+  arrange(desc(quantity)) %>% 
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+##### Example B
+
+Assume we want to find customers with an average order value over $3,800, for orders that have been shipped. 
+
+This example is slightly more complex as we need to join three tables, as follows:
+
+_With SQL:_
+
+```markdown
+SELECT 
+  a.customerName,
+  b.status,
+  avg(c.quantityOrdered * c.priceEach) as avg_value
+FROM
+  customers a
+  INNER JOIN
+  orders b 
+    USING (customerNumber)
+  INNER JOIN
+  orderdetails c 
+    USING (orderNumber)
+GROUP BY 
+  customerName, status
+HAVING 
+  avg_value > 3800 AND status = 'Shipped'
+ORDER BY 
+  avg_value DESC
+```
+Note that in MySQL we can use the alias for average value (*avg_value*) in the `HAVING` clause, which was defined in the `SELECT` clause. Apparently not all versions of SQL support the use of aliases in the `HAVING` clause.
+
+_With R:_
+
+```{r, eval = FALSE}
+customers %>% 
+  left_join(orders, by = 'customerNumber') %>% 
+  left_join(orderdetails, by = 'orderNumber') %>% 
+  group_by(customerName, status) %>% 
+  summarize(avg_value = mean(quantityOrdered * priceEach)) %>% 
+  filter(avg_value > 3800 & status == 'Shipped') %>% 
+  arrange(desc(avg_value))
+```
+
+We find that the following five customers have average shipped order sizes that are over $3,800:
+```{r, echo = FALSE}
+customers %>% 
+  left_join(orders, by = 'customerNumber') %>% 
+  left_join(orderdetails, by = 'orderNumber') %>% 
+  group_by(customerName, status) %>% 
+  summarize(avg_value = mean(quantityOrdered * priceEach)) %>% 
+  filter(avg_value > 3800 & status == 'Shipped') %>% 
+  arrange(desc(avg_value)) %>% 
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+[_(Top)_](#contents)
+<hr>
+
+## 3. Subqueries {#part3}
+
+In SQL, a subquery is where one query (the 'inner query') nested within another query (the 'outer query'). The result of the inner query is used as part of the outer query. 
+
+This concept is illustrated in the two examples below: one in which a subquery is used in the WHERE clause, and one in which it is used in the FROM clause. 
+
+[_(Top)_](#contents)
+<hr>
+
+#### 3.1 Subquery in the WHERE clause{#part3_1}
+
+In this example, we use a subquery find customers whose payments are greater than the average payment. 
+
+_With SQL:_
+
+```markdown
+SELECT 
+  customerNumber, checkNumber, amount
+FROM
+  payments
+WHERE
+  amount > 
+   (SELECT AVG(amount)
+    FROM payments)
+```
+_With R:_
+
+The equivalent code in R is as follows:
+
+```{r, eval = FALSE}
+payments %>% 
+  filter(amount > mean(amount))
+```
+Which gives 134 customers, the first five of which are shown below:
+
+```{r, echo = FALSE}
+payments %>% 
+  filter(amount > mean(amount)) %>% 
+  slice(1:5) %>% 
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+[_(Top)_](#contents)
+<hr>
+
+#### 3.2 Subquery in the FROM clause (derived tables) {#part3_2}
+
+We can also use subqueries in the FROM clause. This creates what's known as a 'derived table' - a virtual table which is only stored for the duration of the query.
+
+In this example we want to find the maximum, minimum and average number of items in an order. To do this we create a subquery / derived table which shows the count of different items that were included in each order.
+
+_With SQL:_
+
+In MySQL we use a subquery to create the derived table called 'itemcount'. This counts the number of items in each order ('items'). Note that in MySQL derived tables must always be given an alias. 
+
+```markdown
+SELECT
+  select max(items), min(items), floor(avg(items))
+FROM( 
+  SELECT 
+    orderNumber, count(orderNumber) as items
+  FROM orderdetails
+  GROUP BY orderNumber) as itemcount
+```
+_With R:_
+
+```{r, eval = FALSE}
+orderdetails %>% 
+  # This is equivalent to the inner query
+  group_by(orderNumber) %>% 
+  summarise(items = n()) %>% 
+  # This is equivalent to the outer query
+  summarise(
+    max = max(items),
+    min = min(items),
+    avg = floor(mean(items))
+  )
+```
+
+This shows that the maximum number of different items in an single order was 18, the minimum was 1, and the average was 9 (rounded).
+
+[_(Top)_](#contents)
+<hr>
+
+#### 3.3 Correlated subqueries{#part3_3}
+
+
+In the previous two examples the subqueries were independent. This means the the inner query did not depend on the outer query, and could have been run as a standalone query. 
+
+A *correlated* subquery is one that uses data from the outer query. In other words, the inner query depends on the outer query. A correlated subquery is evaluated once for each row in the outer query.
+
+For example: say we want to select products with a buy price that is greater than the average buy price for its product line.
+
+_With SQL:_
+
+```markdown
+SELECT 
+  productname, buyprice
+FROM 
+  products as p1
+WHERE buyprice >
+  (SELECT avg(buyprice)
+  FROM products
+  WHERE productLine = p1.productLine)
+```
+Here the inner query is finding the average buy price corresponding to the product line listed in each row of the outer query, and only selecting rows where the product price exceeds this average.  
+
+_With R:_
+
+The same result can be achieved in R using a helper column called 'avgBuyPrice' which, for each row, shows the average price for the associated product line. The data is then filter to only show products whose price is higher than this average:
+
+```{r, eval = FALSE}
+products %>%
+  # This is equivalent to the inner query
+  # Creates a column with the avg price of the relevant product line
+  group_by(productLine) %>% 
+  mutate(avgBuyPrice = mean(buyPrice)) %>% 
+  ungroup() %>%
+  # This is equivalent to the outer query
+  filter(buyPrice > avgBuyPrice) %>% 
+  select(productName, buyPrice)
+  
+```
+
+This code returns 55 rows, the first five of which are shown below: 
+
+```{r, echo = FALSE}
+products %>% 
+  group_by(productLine) %>% 
+  mutate(avgBuyPrice = mean(buyPrice)) %>% 
+  ungroup() %>% 
+  filter(buyPrice > avgBuyPrice) %>% 
+  select(productName, buyPrice) %>% 
+  slice(1:5) %>% 
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+
+[_(Top)_](#contents)
+<hr>
+
+#### 3.4 Common table expressions{#part3_4}
+
+A common table expression (CTE), like a derived table, is a named temporary table that exists only for the duration of a query. It is created using the `WITH` clause.
+
+Unlike a derived table, a CTE can be referenced multiple times in the same query. In addition, a CTE provides better readability and performance in comparison with a derived table.
+
+As a simple illustration, we can repeat the example above (see section 3.2) where we found the maximum, minimum and average number of items in an order. This time, instead of using a subquery, the inner query can be expressed as a common table expression called 'itemcount'
+
+_With SQL:_
+
+This time we create the temporary table called 'itemcount' using the `WITH` clause. We then select the relevant informatoin from this CTE:
+
+```markdown
+WITH itemcount AS (
+	SELECT orderNumber, count(orderNumber) as items
+  FROM orderdetails
+  GROUP BY orderNumber)
+    
+SELECT 
+  max(items), min(items), floor(avg(items))
+FROM 
+  itemcount
+```
+_With R:_
+
+In R, we create a separate dataframe which is analogous to the CTE above:
+
+```{r, eval = FALSE}
+# This is equivalent to the CTE table
+itemcount <- orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarise(items = n())
+
+# This is the code which makes use of the CTE
+itemcount %>%
+  summarize(
+    max = max(items), 
+    min = min(items), 
+    avg = floor(mean(items))
+  )
+```
+
+Here we get the same results as above:
+
+```{r, echo = FALSE, message = F}
+itemcount <- orderdetails %>% 
+  group_by(orderNumber) %>% 
+  summarise(items = n())
+
+itemcount %>%
+  summarize(
+    max = max(items), 
+    min = min(items), 
+    avg = floor(mean(items))
+  ) %>% 
+  
+# Table
+  showTable(scroll = "no") %>% 
+  kable_styling(full_width = F, position = "left")
+```
+
+[_(Top)_](#contents)
+<hr>
+
+
+
+
+
+
+
