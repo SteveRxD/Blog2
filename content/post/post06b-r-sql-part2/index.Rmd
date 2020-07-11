@@ -37,7 +37,7 @@ library(tidyverse)
 # scroll = will include a scroll bar unless you specify 'no'
 
 # Tables use knitr and kableExtra
-# Seehttps://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#overview
+# See https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#overview
 library(knitr)
 library(kableExtra)
 
@@ -109,7 +109,7 @@ In [Part 1](https://www.stevedoogue.com/2019/08/r-and-sql/) of this series we lo
 
 ## The data{#setup}
 
-We will use the same sample dataset from [mysqltutorial.org](http://www.mysqltutorial.org/) that was used in the first part of this post, as described [here](https://www.stevedoogue.com/2019/08/r-and-sql/#the-sample-dataset). The schema is reproduced below for ease of reference:
+We will use the same sample dataset from [mysqltutorial.org](http://www.mysqltutorial.org/) that was used in the first part of this post, as described [here](https://stevedoogue.netlify.app/post/r-and-sql-a/#the-sample-dataset). The schema is reproduced below for ease of reference:
 <br>  
 <br>  
 
@@ -117,7 +117,7 @@ We will use the same sample dataset from [mysqltutorial.org](http://www.mysqltut
 ![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1563847454/06%20R%20SQL/schema.png){width=90%}
 </center>
 
-Instructions on how to load the sample dataset into MySQL and R were provided [here](https://www.stevedoogue.com/2019/08/r-and-sql/#setting-up).  
+Instructions on how to load the sample dataset into MySQL and R were provided [here](https://stevedoogue.netlify.app/post/r-and-sql-a/#setting-up).  
 <br>  
   
 [_(Top)_](#contents)
@@ -785,7 +785,7 @@ As a simple illustration, we can repeat the example above (see section 3.2) wher
 
 _With SQL:_
 
-This time we create the temporary table called 'itemcount' using the `WITH` clause. We then select the relevant informatoin from this CTE:
+This time we create the temporary table called 'itemcount' using the `WITH` clause. We then select the relevant information from this CTE:
 
 ```markdown
 WITH itemcount AS (

@@ -58,7 +58,7 @@ showTable <- function(x, y, scroll = "yes") {
 }
 ```
 {{<alert info>}} 
-In Part 1 of this series we look at the similarities between SQL and R when _selecting_, _sorting_ and _filtering_ data. In [Part 2](https://www.stevedoogue.com/2019/08/r-and-sql-part2/) we move on to look at _joins_, _grouped data_ and _subqueries_.
+In Part 1 of this series we look at the similarities between SQL and R when _selecting_, _sorting_ and _filtering_ data. In [Part 2](https://stevedoogue.netlify.app/post/r-and-sql-b/) we move on to look at _joins_, _grouped data_ and _subqueries_.
 {{</alert>}}
 
 
@@ -144,7 +144,7 @@ library(tidyverse)
 ```
 
 
-When running the code in R, we will create a data frame that corresponds to each table in the relational database. These tables can be downloaded as individual .csv files [here](https://github.com/SteveRxD/Blog/tree/master/content/post/post06-r-sql-part1/tables). Load the data into R using the following code:
+When running the code in R, we will create a data frame that corresponds to each table in the relational database. These tables can be downloaded as individual .csv files [here](https://github.com/SteveRxD/Blog2/tree/master/content/post/post06a-r-sql-part1/tables). Load the data into R using the following code:
 
 ```{r, message=FALSE, warning=FALSE}
 

@@ -25,7 +25,7 @@ projects: []
 <hr>
 <!--more--->
 <p>{{<alert info>}}
-In Part 1 of this series we look at the similarities between SQL and R when <em>selecting</em>, <em>sorting</em> and <em>filtering</em> data. In <a href="https://www.stevedoogue.com/2019/08/r-and-sql-part2/">Part 2</a> we move on to look at <em>joins</em>, <em>grouped data</em> and <em>subqueries</em>.
+In Part 1 of this series we look at the similarities between SQL and R when <em>selecting</em>, <em>sorting</em> and <em>filtering</em> data. In <a href="https://stevedoogue.netlify.app/post/r-and-sql-b/">Part 2</a> we move on to look at <em>joins</em>, <em>grouped data</em> and <em>subqueries</em>.
 {{</alert>}}</p>
 <div id="contents" class="section level2">
 <h2>Contents</h2>
@@ -111,7 +111,7 @@ When working with R, I will be using the <a href="https://cran.r-project.org/web
 <h4>Running the code in R</h4>
 <p>We will be looking at equivalent R code using the <a href="https://www.r-bloggers.com/data-manipulation-with-dplyr/">dplyr</a> package. This includes the use of the pipe operator, <code>%&gt;%</code>, which allows you to chain code together in a series of logical steps. We can load the dplyr package as part of the tidyverse package:</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<p>When running the code in R, we will create a data frame that corresponds to each table in the relational database. These tables can be downloaded as individual .csv files <a href="https://github.com/SteveRxD/Blog/tree/master/content/post/post06-r-sql-part1/tables">here</a>. Load the data into R using the following code:</p>
+<p>When running the code in R, we will create a data frame that corresponds to each table in the relational database. These tables can be downloaded as individual .csv files <a href="https://github.com/SteveRxD/Blog2/tree/master/content/post/post06a-r-sql-part1/tables">here</a>. Load the data into R using the following code:</p>
 <pre class="r"><code># Enter the file path to where the files are saved on your system
 filepath &lt;- &#39;tables/&#39;     
 
