@@ -14,9 +14,9 @@
     
     <item>
       <title>Example Page 1</title>
-      <link>/post/example/example1/</link>
+      <link>/courses/example/example1/</link>
       <pubDate>Sun, 05 May 2019 00:00:00 +0100</pubDate>
-      <guid>/post/example/example1/</guid>
+      <guid>/courses/example/example1/</guid>
       <description>&lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
 &lt;h2 id=&#34;tip-1&#34;&gt;Tip 1&lt;/h2&gt;
 &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
@@ -35,9 +35,9 @@
     
     <item>
       <title>Example Page 2</title>
-      <link>/post/example/example2/</link>
+      <link>/courses/example/example2/</link>
       <pubDate>Sun, 05 May 2019 00:00:00 +0100</pubDate>
-      <guid>/post/example/example2/</guid>
+      <guid>/courses/example/example2/</guid>
       <description>&lt;p&gt;Here are some more tips for getting started with Academic:&lt;/p&gt;
 &lt;h2 id=&#34;tip-3&#34;&gt;Tip 3&lt;/h2&gt;
 &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
@@ -9327,7 +9327,7 @@ productName
  &lt;br /&gt;
 &lt;strong&gt;Demonstration:&lt;/strong&gt;
 &lt;hr&gt;
-&lt;img src=&#34;https://res.cloudinary.com/ddjmrpbw4/image/upload/v1554144819/cityspend.gif&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://res.cloudinary.com/ddjmrpbw4/image/upload/v1554144819/04%20City%20spending/cityspend.gif&#34; /&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt; &lt;br /&gt;
 Notice how the user is first presented with overall revenue / expenditure per resident, and can then drill down to see the results at a finer level of detail. The chart to the right shows the city’s ranking for whichever service the user clicks on. The map allows the user compare revenue or expenditure per head between neighboring cities.&lt;/p&gt;
