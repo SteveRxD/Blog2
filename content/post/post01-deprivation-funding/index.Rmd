@@ -38,6 +38,8 @@ library(tidyverse)
 library(readxl)
 library(plotly)
 library(scales) # This enables percent() function, to format the chart tool tip
+library(htmlwidgets) # used to save plots locally
+library(here)
 
 # Set up Plotly authentication
 # This is only needed if you want to publish to your Plotly account
@@ -106,7 +108,9 @@ p <- df4 %>%
       ) %>%
   
       layout(
-        xaxis = list(title = "Income deprivation", tickfont = list(size = 12),tickformat = "%"),
+        xaxis = list(title = "Income deprivation", 
+                     tickfont = list(size = 12),
+                     tickformat = "%"),
         # The following line adds blank spaces between 'Spending Power' and the axis ticks
         yaxis = list(title = paste0("Change in spending power", rep("\n&nbsp;", 3)),
                 tickfont = list(size = 12), tickformat = "%"), 
@@ -123,19 +127,20 @@ p <- df4 %>%
   
       config(displayModeBar = FALSE) # hides the pop-up menu that appears in Plotly charts
 
-      # Alternative way to publish to Ploty: 
-      
-      # api_create(p, filename = "funding_cuts")
-      # <iframe width="700" height="600" frameborder="0" scrolling="no" src="//plot.ly/~SteveRxD/5.embed"></iframe>
-
 ```
+
+```{r, echo = FALSE}
+# create html version of the animated plot
+setwd(here::here("static","img","post01-deprivation-funding"))
+saveWidget(p, "plot1.html")
+```
+
   
 __Fig 1: Deprivation and change in spending power since 2010__
-```{r, echo = FALSE}
-p
-
-```
-
+<iframe src="/img/post01-deprivation-funding/plot1.html" 
+ width="100%" height="600" frameBorder="0"></iframe>
+  
+  
 Spending power reflects the major revenue streams available to local councils. It is made up of two components: 
 
 * __Council tax revenue__, a tax paid by residents based on the value of their homes; and
