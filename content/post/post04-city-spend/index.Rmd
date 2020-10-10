@@ -44,7 +44,9 @@ As an example, I created a dashboard showing how major cities in the US raise an
   
 &nbsp;  
 __Demonstration:__ <hr>
-![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1554144819/cityspend.gif)
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1554144819/04%20City%20spending/cityspend.gif)
+
+
 <hr>  
 &nbsp;  
 Notice how the user is first presented with overall revenue / expenditure per resident, and can then drill down to see the results at a finer level of detail. The chart to the right shows the city's ranking for whichever service the user clicks on. The map allows the user compare revenue or expenditure per head between neighboring cities.
