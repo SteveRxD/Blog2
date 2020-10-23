@@ -20,7 +20,8 @@ interests:
 - Financial modeling
 - R
 - Excel
+- Tableau
 
 ---
 
-I'm a data and finance guy, using this blog as an opportunity to learn new data analysis tools. I live in Dallas, Texas. 
+I'm a data / finance guy, using this blog as an opportunity to learn new data analysis tools. I live in Dallas, Texas. 

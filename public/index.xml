@@ -7,7 +7,7 @@
     <description>Steve Doogue</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sat, 01 Jun 2030 13:00:00 +0000</lastBuildDate>
     <image>
-      <url>/images/icon_hu6a050815a3d93f17d48b265e3b103f3b_20645_512x512_fill_lanczos_center_2.png</url>
+      <url>/images/icon_huc081b5325ff580da64fd75947be28aff_20645_512x512_fill_lanczos_center_2.png</url>
       <title>Steve Doogue</title>
       <link>/</link>
     </image>
@@ -73,6 +73,27 @@
 &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;shortcodes&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Further talk details can easily be added to this page using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Useful R code</title>
+      <link>/post/useful-r-code/</link>
+      <pubDate>Fri, 23 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>/post/useful-r-code/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This is a place where I will save some useful notes and code, to save me having to Google common tasks:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://steverxd.github.io/Useful-R-code.html&#34; class=&#34;uri&#34;&gt;https://steverxd.github.io/Useful-R-code.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;So far this includes notes on:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;basic GitHub operations (e.g. create a new repository)&lt;/li&gt;
+&lt;li&gt;producing plots (ggplot); and&lt;/li&gt;
+&lt;li&gt;working with strings in R (e.g. find and replace text)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I plan to add to these notes over time!&lt;/p&gt;
 </description>
     </item>
     
