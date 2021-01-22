@@ -21,7 +21,7 @@ When producing financial models, simulations are often used to assess the *range
 
 If your model is based two or more variables that are *correlated* in real life then it is important that your simulated data be similarly correlated. This blog post aims to do the following:
 
--   Demonstrate the importance of including correlations in our simulated data (assuming the data is correlated in real life);
+-   Demonstrate the importance of reflecting correlations in our simulated data;
 -   Identify the code that can be used to generate random correlated data, using **R**; and
 -   Briefly explains how to simulate correlated data in Microsoft Excel
 
@@ -45,13 +45,13 @@ The investor assumes that the market rent for each unit would grow at 2% per yea
 
 The investor believes that the growth rates are would be correlated. The change in market rents for units A and B are likely to be highly correlated with one another, given that they are both residential units sharing the same physical location. Growth in apartment rent is also likely to be correlated with rent for the retail space, but to a lesser extent. Factors could affect the demand for retail space and residential space differently; for example, competition from new retail developments nearby.
 
-To assess the likely range of rental incomes in five years' time, the investor could use simulations. Simulations involve generating thousands of random data points from an assumed distribution (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). We then plug this data into our model and observe the range of results; in this case, the potential range of income from the building.
+To assess the likely range of rental incomes in five years' time, the investor could use simulations. Simulations involve generating thousands of random data points from an assumed distribution (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). They would then plug this data into their model and observe the range of results; in this case, the potential range of income from the building.
 
-The range of the simulated outcomes will depend on whether or not correlations between variables are taken into account. In this example, failing to reflect the correlations between unit types will underestimate the potential range of property income in five years' time. This could lead the investor to underestimate the risk of purchasing the property. This is illustrated in the following sections.
+The range of the simulated outcomes will depend on whether or not correlations are taken into account. In this example, failing to reflect the correlations between unit types will underestimate the potential range of property income in five years' time. This could lead the investor to underestimate the risk of purchasing the property.
 
 <br>
 
-## Code to produce simulated data
+## Code to generate random simulated data
 
 <br>
 
