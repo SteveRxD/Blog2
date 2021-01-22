@@ -25,7 +25,7 @@ projects: []
 <p>When producing financial models, simulations are often used to assess the <em>range</em> of potential outcomes. ‘Monte Carlo’ analysis involves running the model a large number of times using randomly generated data. The results of the separate trials are then combined to assess the probability of a given outcome.</p>
 <p>If your model is based two or more variables that are <em>correlated</em> in real life then it is important that your simulated data be similarly correlated. This blog post aims to do the following:</p>
 <ul>
-<li>Demonstrate the importance of including correlations in our simulated data (assuming the data is correlated in real life);</li>
+<li>Demonstrate the importance of reflecting correlations in our simulated data;</li>
 <li>Identify the code that can be used to generate random correlated data, using <strong>R</strong>; and</li>
 <li>Briefly explains how to simulate correlated data in Microsoft Excel</li>
 </ul>
@@ -41,12 +41,12 @@ income = 2000(1 +growth_A)^5 + 2000(1 +growth_B)^5 + 2000(1 +growth_C)^5
 <p>where <span class="math inline">\(growth_A\)</span>, <span class="math inline">\(growth_B\)</span> and <span class="math inline">\(growth_c\)</span> are the average annual growth rates for units A, B and C, respectively.</p>
 <p>The investor assumes that the market rent for each unit would grow at 2% per year. However, this is subject to risk: the actual growth rates may be higher or lower than 2%. The investor assumes that the average growth rate will follow a normal (i.e. bell-shaped) distribution, with a standard deviation of 1%.</p>
 <p>The investor believes that the growth rates are would be correlated. The change in market rents for units A and B are likely to be highly correlated with one another, given that they are both residential units sharing the same physical location. Growth in apartment rent is also likely to be correlated with rent for the retail space, but to a lesser extent. Factors could affect the demand for retail space and residential space differently; for example, competition from new retail developments nearby.</p>
-<p>To assess the likely range of rental incomes in five years’ time, the investor could use simulations. Simulations involve generating thousands of random data points from an assumed distribution (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). We then plug this data into our model and observe the range of results; in this case, the potential range of income from the building.</p>
-<p>The range of the simulated outcomes will depend on whether or not correlations between variables are taken into account. In this example, failing to reflect the correlations between unit types will underestimate the potential range of property income in five years’ time. This could lead the investor to underestimate the risk of purchasing the property. This is illustrated in the following sections.</p>
+<p>To assess the likely range of rental incomes in five years’ time, the investor could use simulations. Simulations involve generating thousands of random data points from an assumed distribution (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). They would then plug this data into their model and observe the range of results; in this case, the potential range of income from the building.</p>
+<p>The range of the simulated outcomes will depend on whether or not correlations are taken into account. In this example, failing to reflect the correlations between unit types will underestimate the potential range of property income in five years’ time. This could lead the investor to underestimate the risk of purchasing the property.</p>
 <p><br></p>
 </div>
-<div id="code-to-produce-simulated-data" class="section level2">
-<h2>Code to produce simulated data</h2>
+<div id="code-to-generate-random-simulated-data" class="section level2">
+<h2>Code to generate random simulated data</h2>
 <p><br></p>
 <p>This section describes the code (using R) that can be used to generate our simulated growth rates. You can skip to the next section if you are more interested in the general principles than the nuts and bolts.</p>
 <p>Our goal is to generate three growth rates that are normally distributed, each with a specified mean and standard deviation, and which are correlated with one another. To do this we will be using the <code>mvrnorm</code> function from the MASS package.</p>
