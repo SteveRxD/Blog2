@@ -1,6 +1,6 @@
 ---
 title: 'Deprivation and funding cuts in England'
-Summary: 'Using animated to demonstrate how the most deprived parts of England have borne the brunt of public spending cuts since 2010.'
+Summary: 'Using animated charts to demonstrate how the most deprived parts of England have borne the brunt of public spending cuts since 2010.'
 author: Steve Doogue
 date: '2018-04-04'
 reading_time: false
