@@ -4,8 +4,8 @@ authors:
 
 education:
   courses:
-  - course: MSc in Develepment Economics
-    institution: School of Oriental & African Studies, University of London
+  - course: MSc in Development Economics
+    institution: SOAS, University of London
     year: 2009
   - course: BCom(Hons) in Economics
     institution: Victoria University of Wellington, New Zealand
