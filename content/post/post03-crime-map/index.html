@@ -1,7 +1,7 @@
 ---
 title: 'A neighborhood crime map using Shiny'
 subtitle: '' # this goes below title in main post
-summary: 'In this post I create a simple webapp that maps live crime data in my neighborhood.'
+summary: 'A simple webapp that maps live crime data in my neighborhood.'
 author: ''
 date: '2019-01-15'
 slug: crime-map
@@ -17,7 +17,7 @@ image:
 projects: []
 ---
 
-<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+<script src="index_files/header-attrs/header-attrs.js"></script>
 
 
 <em>In this post I create a <a href="https://stevedoogue.shinyapps.io/crimemap/">crime map of my local neighborhood</a>, using live data accessed from the City of Dallas’ OpenData portal.</em>
@@ -26,7 +26,7 @@ projects: []
 <p>With this in mind, I built a simple app that accesses crime data from the City of Dallas and maps the locations in my neighborhood. The app can be found <a href="https://stevedoogue.shinyapps.io/crimemap/">here</a>. This accesses the latest data from the City of Dallas’ <a href="https://www.dallasopendata.com/Public-Safety/Police-Incidents/qv6i-rri7">OpenData API</a> which is updated daily.</p>
 <p>The main features are illustrated below (and yep, there’s a Hollywood Santa Monica in Dallas!):<br />
  </p>
-<p><img src="https://res.cloudinary.com/ddjmrpbw4/image/upload/v1546723680/crimemapgif.gif" /></p>
+<p><img src="https://res.cloudinary.com/ddjmrpbw4/image/upload/v1546723680/03%20Crime%20map/crimemapgif.gif" /></p>
 <p>As can be seen, the app allows the user select the neighborhoods they’re interested in, and then displays incidents occurring in those neighborhoods over the selected time frame (from the past month to past three years).</p>
 <p>Note that to preserve the anonymity of my neighbors, I added some random ‘noise’ to the location data, so that the points displayed on the map would be within around 150 feet of the actual location.</p>
 <p>The concept of Shiny is brilliant: it allows you to provide a user-friendly interface to your R code (like a dashboard) which can be accessed through a website. The user does not need to see any of the underlying code, and, because it is web-based, does not need to download anything. Your app can be hosted for free at <a href="https://shiny.rstudio.com/deploy/">Shinyapps.io</a> (though the free version is subject to limitations on how long it can be accessed each month).</p>

@@ -1,19 +1,19 @@
 ---
-title: 'Simulating correlated data'
-subtitle: '' # this goes below title in main post
-summary: 'How simulate correlated data and why it`s important for Monte Carlo analysis.'
+title: "Generating random correlated data"
 author: ''
 date: '2021-01-21'
+subtitle: ''
+summary: How to generate *correlated* random data for your simulations and why this can be important.
 slug: simulating-data
 categories: []
 tags: []
 authors: []
 lastmod: ''
-featured: false
-draft: false
+featured: no
+draft: no
 image:
-  caption: ""
-  preview_only: true
+  caption: ''
+  preview_only: yes
 projects: []
 ---
 
@@ -22,13 +22,12 @@ projects: []
 <link href="index_files/lightable/lightable.css" rel="stylesheet" />
 
 
-<p>When producing financial models, simulations are often used to assess the <em>range</em> of potential outcomes. Monte Carlo analysis involves running the model a large number of times using randomly generated data. The results of the separate trials are then combined to assess the probability of a given outcome.</p>
+<p>When producing financial models, simulations are often used to assess the <em>range</em> of potential outcomes. ‘Monte Carlo’ analysis involves running the model a large number of times using randomly generated data. The results of the separate trials are then combined to assess the probability of a given outcome.</p>
 <p>If your model is based two or more variables that are <em>correlated</em> in real life then it is important that your simulated data be similarly correlated. This blog post aims to do the following:</p>
 <ul>
-<li><p>Illustrate how these simulations can be carried out in practice;</p></li>
-<li><p>Demonstrate the importance of including correlations in our simulated data (assuming the data is correlated in real life);</p></li>
-<li><p>Identify the code that can be used to simulate correlated data, using <strong>R</strong>; and</p></li>
-<li><p>Briefly explains how to simulate correlated data in Microsoft Excel</p></li>
+<li>Demonstrate the importance of including correlations in our simulated data (assuming the data is correlated in real life);</li>
+<li>Identify the code that can be used to generate random correlated data, using <strong>R</strong>; and</li>
+<li>Briefly explains how to simulate correlated data in Microsoft Excel</li>
 </ul>
 <p><br></p>
 <div id="example" class="section level2">
@@ -42,8 +41,7 @@ income = 2000(1 +growth_A)^5 + 2000(1 +growth_B)^5 + 2000(1 +growth_C)^5
 <p>where <span class="math inline">\(growth_A\)</span>, <span class="math inline">\(growth_B\)</span> and <span class="math inline">\(growth_c\)</span> are the average annual growth rates for units A, B and C, respectively.</p>
 <p>The investor assumes that the market rent for each unit would grow at 2% per year. However, this is subject to risk: the actual growth rates may be higher or lower than 2%. The investor assumes that the average growth rate will follow a normal (i.e. bell-shaped) distribution, with a standard deviation of 1%.</p>
 <p>The investor believes that the growth rates are would be correlated. The change in market rents for units A and B are likely to be highly correlated with one another, given that they are both residential units sharing the same physical location. Growth in apartment rent is also likely to be correlated with rent for the retail space, but to a lesser extent. Factors could affect the demand for retail space and residential space differently; for example, competition from new retail developments nearby.</p>
-<p>The investor could estimate the expected income in five years’ time simply by plugging their assumed growth into the formula above, giving $6,624 per month.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> But they also want to know the risk associated with this investment in terms of the <em>range</em> of possible outcomes. This is where simulations are of use.</p>
-<p>Simulations involve generating thousands of random data points from a distribution we specify (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). We then plug this data into our model and observe the range of results; in this case, the potential range of income from the building.</p>
+<p>To assess the likely range of rental incomes in five years’ time, the investor could use simulations. Simulations involve generating thousands of random data points from an assumed distribution (in this case, a normal distribution with a mean of 2% and a standard deviation of 1%). We then plug this data into our model and observe the range of results; in this case, the potential range of income from the building.</p>
 <p>The range of the simulated outcomes will depend on whether or not correlations between variables are taken into account. In this example, failing to reflect the correlations between unit types will underestimate the potential range of property income in five years’ time. This could lead the investor to underestimate the risk of purchasing the property. This is illustrated in the following sections.</p>
 <p><br></p>
 </div>
@@ -55,7 +53,7 @@ income = 2000(1 +growth_A)^5 + 2000(1 +growth_B)^5 + 2000(1 +growth_C)^5
 <p>Start by loading our libraries:</p>
 <pre class="r"><code>library(tidyverse)
 library(MASS)   # to produce multivariate correlated variables</code></pre>
-<p>The first step is to specify the mean growth rate for each unit (2%) and the standard deviation (1%). We also specify the correlations between the property units. We will assume the correlation between apartments (units A and B) is 0.9, while the correlation between each apartment and the retail unit (unit C) is 0.45.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> These are specified as follows:</p>
+<p>The first step is to specify the mean growth rate for each unit (2%) and the standard deviation (1%). We also specify the correlations between the property units. We will assume the correlation between apartments (units A and B) is 0.9, while the correlation between each apartment and the retail unit (unit C) is 0.45.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> These are specified as follows:</p>
 <pre class="r"><code>## means of individual distributions
 mu_A &lt;- 0.02
 mu_B &lt;- 0.02
@@ -195,7 +193,7 @@ independent
 </tr>
 </tbody>
 </table>
-<p>The foregoing illustrates the importance of taking correlations into account when running simulations. Failing to account for correlations could underestimate the range of potential outcomes. It could also <em>overestimate</em> the range of potential outcomes, depending on whether the data being simulated was positively or negatively correlated in real life, and the model used to generate the outcome of interest.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The foregoing illustrates the importance of taking correlations into account when running simulations. Failing to account for correlations could underestimate the range of potential outcomes. It could also <em>overestimate</em> the range of potential outcomes, depending on whether the data being simulated was positively or negatively correlated in real life, and the model used to generate the outcome of interest.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p><br></p>
 </div>
 <div id="simulations-with-correlated-data-in-excel" class="section level2">
@@ -205,7 +203,7 @@ independent
 <p>You can do something similar in Microsoft Excel. However, this depends on whether you want to simulate correlations between <em>two</em> variables (‘bivariate’) or <em>three or more</em> variables (‘multivariate’). The former is relatively straightforward, but the latter requires the use of macros or addins.</p>
 <p><strong>Simulating two correlated variables</strong></p>
 <p>The following is an example of how we can produce two random, normally-distributed variables, X and Y, with a specified correlation between the two. Note that these are random values, so your figures will be different from those shown below.</p>
-<p>We begin by entering our parameters in the second column. These include</p>
+<p>We begin by entering our parameters in the second column (see screen shot below). These include</p>
 <ul>
 <li>The mean of X (<span class="math inline">\(meanX\)</span>);</li>
 <li>The standard deviation of X (<span class="math inline">\(sdX\)</span>);</li>
@@ -213,7 +211,7 @@ independent
 <li>The standard deviation of Y (<span class="math inline">\(sdY\)</span>); and</li>
 <li>The correlation coefficient (<span class="math inline">\(rho\)</span>)</li>
 </ul>
-<p>!(/static/img/post08-simulations/simulation_image.png)</p>
+<p><img src="/img/post08-simulations/simulation_image.png"/></p>
 <p>Next we create two random ‘helper’ variables, A and B, which are normally distributed with a mean of zero and a standard deviation of 1 (i.e. ‘standard normal’). To produce each of these variables we use the Excel formula <code>=NORM.INV(RAND(),0,1)</code>. This formula can then be copied down, e.g. 1000 times, depending on how many trials you want in the simulation.</p>
 <p>Next, create variable X. The values in this column are calculated using the general formula <span class="math inline">\(meanX+sdX \cdot A\)</span>, where A is the corresponding cell in the helper column described above.</p>
 <p>Then create variable Y. The values in this column are are based on the formula: <span class="math inline">\(meanY + sdY (A \cdot rho+B(1-rho^2)^{0.5})\)</span>, where again A and B refer to the corresponding cells in the helper columns.</p>
@@ -226,8 +224,7 @@ independent
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><span class="math inline">\(3\cdot\$2000(1+2\%)^5=\$6,624\)</span><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>In reality, these correlations could be estimated by examining historical data.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>For example, if the model was X = Y + Z then failing to account for a positive correlation between Y and Z would underestimate the range of X. However if the model was X = Y / Z then the opposite would be true.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>In reality, these correlations could be estimated by examining historical data.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>For example, if the model was X = Y + Z then failing to account for a positive correlation between Y and Z would underestimate the range of X. However if the model was X = Y / Z then the opposite would be true.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

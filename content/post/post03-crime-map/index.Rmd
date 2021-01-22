@@ -1,7 +1,7 @@
 ---
 title: 'A neighborhood crime map using Shiny'
 subtitle: '' # this goes below title in main post
-summary: 'In this post I create a simple webapp that maps live crime data in my neighborhood.'
+summary: 'A simple webapp that maps live crime data in my neighborhood.'
 author: ''
 date: '2019-01-15'
 slug: crime-map
@@ -29,7 +29,10 @@ The main features are illustrated below (and yep, there's a Hollywood Santa Moni
 &nbsp;
 
 
-![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1546723680/crimemapgif.gif)
+![](https://res.cloudinary.com/ddjmrpbw4/image/upload/v1546723680/03%20Crime%20map/crimemapgif.gif)
+
+
+
 
 
 As can be seen, the app allows the user select the neighborhoods they're interested in, and then displays incidents occurring in those neighborhoods over the selected time frame (from  the past month to past three years).
