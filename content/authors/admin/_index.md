@@ -24,4 +24,5 @@ interests:
 
 ---
 
-I'm a data / finance guy, using this blog as an opportunity to learn new data analysis tools. I live in Dallas, Texas. 
+A random assortment of data analysis, finance and statistics. 
+Using this blog as an opportunity to learn new data analysis tools.
